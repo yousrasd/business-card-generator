@@ -2,8 +2,11 @@ package com.yousrasdn.businesscardgenerator.domain.validator
 
 import android.util.Patterns
 import com.yousrasdn.businesscardgenerator.R
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class ValidateCardProfileFieldsUseCase {
+@Singleton
+class ValidateCardProfileFieldsUseCase @Inject constructor() {
 
     fun validateEmail(email: String): CardProfileFieldValidationResult {
         return when {

@@ -29,7 +29,7 @@ class MainActivity : ComponentActivity() {
             BusinessCardGeneratorTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
 
-                    val backStack = remember { mutableStateListOf<Any>(ScreensListing.Onboarding) }
+                    val backStack = remember { mutableStateListOf<Any>(ScreensListing.CardProfile) }
 
                     NavDisplay(
                         backStack = backStack,

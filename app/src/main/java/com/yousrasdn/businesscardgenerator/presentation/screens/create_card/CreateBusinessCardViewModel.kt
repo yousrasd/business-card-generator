@@ -111,12 +111,14 @@ class CreateBusinessCardViewModel @Inject constructor(
         if (nextStep != null) {
             _uiState.value = _uiState.value.copy(currentStep = nextStep)
         }
+        validateCurrentStep()
     }
 
     private fun handlePreviousStep() {
         val previousStep = _uiState.value.currentStep.getPreviousStep()
         if (previousStep != null) {
             _uiState.value = _uiState.value.copy(currentStep = previousStep)
+            validateCurrentStep()
         } else {
             _sideEffect.tryEmit(CreateBusinessCardSideEffect.NavigateBack)
         }
