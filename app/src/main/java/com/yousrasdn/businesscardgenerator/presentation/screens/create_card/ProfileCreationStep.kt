@@ -27,3 +27,5 @@ fun ProfileCreationStep.normalizeToNumber(): Int = when(this) {
     ProfileCreationStep.Photo ->  3
     ProfileCreationStep.Review -> 4
 }
+
+fun ProfileCreationStep.isLastStep(): Boolean = this == ProfileCreationStep.Review

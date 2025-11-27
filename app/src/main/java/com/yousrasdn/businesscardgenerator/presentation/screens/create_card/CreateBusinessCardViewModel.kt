@@ -158,8 +158,10 @@ class CreateBusinessCardViewModel @Inject constructor(
         val nextStep = _uiState.value.currentStep.getNextStep()
         if (nextStep != null) {
             _uiState.value = _uiState.value.copy(currentStep = nextStep)
+            validateCurrentStep()
+        } else {
+
         }
-        validateCurrentStep()
     }
 
     private fun handlePreviousStep() {

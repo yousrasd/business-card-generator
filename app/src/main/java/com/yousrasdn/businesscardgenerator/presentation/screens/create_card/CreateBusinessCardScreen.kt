@@ -121,7 +121,8 @@ fun AddBusinessCardScreen(backStack: SnapshotStateList<Any>, createBusinessCardV
 
                 FooterContinueButton(
                     onEvent = createBusinessCardViewModel::onEvent,
-                    isDisabled = uiState.value.isNextButtonDisabled
+                    isDisabled = uiState.value.isNextButtonDisabled,
+                    isLastScreen = uiState.value.currentStep.isLastStep()
                 )
 
             }
