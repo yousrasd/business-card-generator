@@ -1,5 +1,10 @@
 package com.yousrasdn.businesscardgenerator.presentation.screens.create_card.steps
 
+import android.Manifest
+import android.app.Activity
+import android.content.Intent
+import android.net.Uri
+import android.provider.Settings
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -14,20 +19,26 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.core.app.ActivityCompat
 import androidx.core.content.FileProvider
 import coil.compose.AsyncImage
 import com.yousrasdn.businesscardgenerator.R
@@ -52,7 +63,10 @@ fun CreateProfilePhotoScreen(
             file
         )
     }
-    
+
+    var showCameraRationale by remember { mutableStateOf(false) }
+    var showCameraRequestDialog by remember { mutableStateOf(false) }
+
     val galleryLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.PickVisualMedia()
     ) { uri ->
@@ -68,12 +82,19 @@ fun CreateProfilePhotoScreen(
             onEvent(CreateBusinessCardEvent.UpdatePhoto(photoUri.toString()))
         }
     }
-    
+
     val cameraPermissionLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { isGranted ->
         if (isGranted) {
             cameraLauncher.launch(photoUri)
+        } else {
+            // Permission denied
+            showCameraRationale =  ActivityCompat.shouldShowRequestPermissionRationale(
+                context as Activity,
+                Manifest.permission.CAMERA
+            )
+            showCameraRequestDialog = true
         }
     }
 
@@ -160,6 +181,60 @@ fun CreateProfilePhotoScreen(
             ) {
                 Text(stringResource(R.string.photo_remove))
             }
+        }
+
+        if (showCameraRequestDialog) {
+            AlertDialog(
+                onDismissRequest = { showCameraRequestDialog = false },
+                icon = {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_camera),
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                },
+                title = {
+                    Text(stringResource(R.string.camera_permission_title))
+                },
+                text = {
+                    Text(
+                        if (showCameraRationale) {
+                            stringResource(R.string.camera_permission_rationale)
+                        } else {
+                            stringResource(R.string.camera_permission_settings_message)
+                        }
+                    )
+                },
+                confirmButton = {
+                    TextButton(
+                        onClick = {
+                            showCameraRequestDialog = false
+                            if (showCameraRationale) {
+                                cameraPermissionLauncher.launch(Manifest.permission.CAMERA)
+                            } else {
+                                val intent = Intent(
+                                    Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                                    Uri.fromParts("package", context.packageName, null)
+                                )
+                                context.startActivity(intent)
+                            }
+                        }
+                    ) {
+                        Text(
+                            if (showCameraRationale) {
+                                stringResource(R.string.grant_permission)
+                            } else {
+                                stringResource(R.string.open_settings)
+                            }
+                        )
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = { showCameraRequestDialog = false }) {
+                        Text(stringResource(R.string.btn_cancel))
+                    }
+                }
+            )
         }
     }
 }

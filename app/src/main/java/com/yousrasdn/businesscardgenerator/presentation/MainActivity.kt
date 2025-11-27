@@ -15,6 +15,7 @@ import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
 import com.yousrasdn.businesscardgenerator.core.navigation.ScreensListing
 import com.yousrasdn.businesscardgenerator.presentation.screens.create_card.AddBusinessCardScreen
+import com.yousrasdn.businesscardgenerator.presentation.screens.home.HomeScreen
 import com.yousrasdn.businesscardgenerator.presentation.screens.onboarding.OnboardingScreen
 import com.yousrasdn.businesscardgenerator.presentation.screens.scan_card.ScanCardScreen
 import com.yousrasdn.businesscardgenerator.ui.theme.BusinessCardGeneratorTheme
@@ -29,7 +30,7 @@ class MainActivity : ComponentActivity() {
             BusinessCardGeneratorTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
 
-                    val backStack = remember { mutableStateListOf<Any>(ScreensListing.CardProfile) }
+                    val backStack = remember { mutableStateListOf<Any>(ScreensListing.Onboarding) }
 
                     NavDisplay(
                         backStack = backStack,
@@ -44,6 +45,9 @@ class MainActivity : ComponentActivity() {
                             }
                             entry<ScreensListing.ScanCard> {
                                 ScanCardScreen(backStack)
+                            }
+                            entry<ScreensListing.Home> {
+                                HomeScreen(backStack)
                             }
                         },
                     )

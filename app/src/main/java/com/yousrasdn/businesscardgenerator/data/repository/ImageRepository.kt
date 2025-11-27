@@ -11,6 +11,8 @@ interface ImageRepository {
 
     /**
      * Saves an image to the app's storage and returns the storage path
+     *
+     * @param uri The URI of the image to save - the URI points to local cache folder on app storage
      */
     fun saveImage(uri: String): String
 

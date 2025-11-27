@@ -96,7 +96,20 @@
     <!-- Error Messages -->
     <string name="error_delete_photo">Oops! Unable to delete the photo. Please try again.</string>
     <string name="error_save_photo">Failed to save photo. Please try again.</string>
+    <string name="error_save_card">Unable to save your business card. Please try again.</string>
+
+    <!-- Loading Messages -->
+    <string name="loading_processing_photo">Processing photo…</string>
+    <string name="loading_deleting_photo">Deleting photo…</string>
+    <string name="loading_saving_card">Saving your card…</string>
     
+    <!-- Camera Permission -->
+    <string name="camera_permission_title">Camera Permission Required</string>
+    <string name="camera_permission_rationale">We need camera access to take your profile photo. This helps personalize your business card.</string>
+    <string name="camera_permission_settings_message">Camera permission is required to take photos. Please enable it in app settings.</string>
+    <string name="grant_permission">Grant Permission</string>
+    <string name="open_settings">Open Settings</string>
+
     <!-- QR Code -->
     <string name="qr_code_title">Share Your Card</string>
     <string name="qr_code_save">Save QR Code</string>

@@ -7,7 +7,7 @@ import javax.inject.Inject
 class ProfilePictureProcessingUseCase @Inject constructor(
     val imageRepository: ImageRepository
 ){
-    operator fun invoke(uri: String): String =
+    fun saveImage(uri: String): String =
         imageRepository.saveImage(uri)
     
     fun deleteImage(uri: String): Boolean =

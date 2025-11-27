@@ -33,6 +33,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.yousrasdn.businesscardgenerator.R
+import com.yousrasdn.businesscardgenerator.core.navigation.ScreensListing
+import com.yousrasdn.businesscardgenerator.core.ui.components.LoadingOverlay
 import com.yousrasdn.businesscardgenerator.core.ui.components.StepIndicator
 import com.yousrasdn.businesscardgenerator.presentation.screens.create_card.steps.CreateBasicInfoScreen
 import com.yousrasdn.businesscardgenerator.presentation.screens.create_card.steps.CreateContactInfoScreen
@@ -60,7 +62,10 @@ fun AddBusinessCardScreen(backStack: SnapshotStateList<Any>, createBusinessCardV
                         duration = SnackbarDuration.Short
                     )
                 }
-                else -> {}
+                is CreateBusinessCardSideEffect.CardCreationSuccess -> {
+                    backStack.clear()
+                    backStack.add(ScreensListing.Home)
+                }
             }
         }
     }
@@ -125,6 +130,12 @@ fun AddBusinessCardScreen(backStack: SnapshotStateList<Any>, createBusinessCardV
                     isLastScreen = uiState.value.currentStep.isLastStep()
                 )
 
+            }
+            
+            if (uiState.value.isLoading) {
+                LoadingOverlay(
+                    message = uiState.value.loadingMessage
+                )
             }
         }
 

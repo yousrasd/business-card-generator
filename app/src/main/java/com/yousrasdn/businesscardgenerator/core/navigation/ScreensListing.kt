@@ -4,4 +4,5 @@ data object ScreensListing {
     data object CardProfile
     data object Onboarding
     data object ScanCard
+    data object Home
 }

@@ -4,11 +4,13 @@ import android.app.Application
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.yousrasdn.businesscardgenerator.R
+import com.yousrasdn.businesscardgenerator.data.repository.BusinessCardRepository
 import com.yousrasdn.businesscardgenerator.domain.usecase.CardProfileFieldValidationResult
 import com.yousrasdn.businesscardgenerator.domain.usecase.ProfilePictureProcessingUseCase
 import com.yousrasdn.businesscardgenerator.domain.validator.StepValidatorFactory
 import com.yousrasdn.businesscardgenerator.domain.usecase.ValidateCardProfileFieldsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -23,7 +25,8 @@ class CreateBusinessCardViewModel @Inject constructor(
     private val application: Application,
     private val validateFields: ValidateCardProfileFieldsUseCase,
     private val stepValidatorFactory: StepValidatorFactory,
-    private val profilePictureProcessingUseCase: ProfilePictureProcessingUseCase
+    private val profilePictureProcessingUseCase: ProfilePictureProcessingUseCase,
+    private val businessCardRepository:  BusinessCardRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(CreateBusinessCardState())
@@ -115,17 +118,16 @@ class CreateBusinessCardViewModel @Inject constructor(
 
     private fun handlePhotoUpdate(value: String) {
         _uiState.value = _uiState.value.copy(
-            isLoading = true
+            isLoading = true,
+            loadingMessage = application.getString(R.string.loading_processing_photo)
         )
 
-        val uriPath = profilePictureProcessingUseCase.invoke(value)
+        val uriPath = profilePictureProcessingUseCase.saveImage(value)
 
         _uiState.value = _uiState.value.copy(
-            profilePhotoUri = uriPath
-        )
-
-        _uiState.value = _uiState.value.copy(
-            isLoading = false
+            profilePhotoUri = uriPath,
+            isLoading = false,
+            loadingMessage = null
         )
 
         validateCurrentStep()
@@ -133,23 +135,26 @@ class CreateBusinessCardViewModel @Inject constructor(
 
     private fun handlePhotoDelete(value: String) {
         viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(isLoading = true)
-            
+            _uiState.value = _uiState.value.copy(
+                isLoading = true,
+                loadingMessage = application.getString(R.string.loading_deleting_photo)
+            )
+
             val isSuccessful = profilePictureProcessingUseCase.deleteImage(value)
 
-            if(isSuccessful) {
-                _uiState.value = _uiState.value.copy(
-                    profilePhotoUri = null,
-                    isLoading = false
-                )
-            } else {
-                _uiState.value = _uiState.value.copy(isLoading = false)
+            if(!isSuccessful) {
                 _sideEffect.tryEmit(
                     CreateBusinessCardSideEffect.ShowError(
                         application.getString(R.string.error_delete_photo)
                     )
                 )
             }
+
+            _uiState.value = _uiState.value.copy(
+                profilePhotoUri = if(isSuccessful) null else _uiState.value.profilePhotoUri,
+                isLoading = false,
+                loadingMessage = null
+            )
 
         }
     }
@@ -159,8 +164,31 @@ class CreateBusinessCardViewModel @Inject constructor(
         if (nextStep != null) {
             _uiState.value = _uiState.value.copy(currentStep = nextStep)
             validateCurrentStep()
-        } else {
+        } else { // Review step (last step)
+            _uiState.value = _uiState.value.copy(
+                isLoading = true,
+                loadingMessage = application.getString(R.string.loading_saving_card)
+            )
+            val businessCard = _uiState.value.mapToBusinessCard()
 
+            viewModelScope.launch {
+                val result = businessCardRepository.saveCard(businessCard)
+                if (result.isSuccess) {
+                    _sideEffect.tryEmit(
+                        CreateBusinessCardSideEffect.CardCreationSuccess
+                    )
+                } else {
+                    _sideEffect.tryEmit(CreateBusinessCardSideEffect.ShowError(
+                        application.getString(R.string.error_save_card)
+                    ))
+
+                }
+                _uiState.value = _uiState.value.copy(
+                    isLoading = false,
+                    loadingMessage = null
+                )
+
+            }
         }
     }
 
