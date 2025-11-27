@@ -4,11 +4,9 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
-import coil.compose.AsyncImage
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -16,24 +14,27 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.core.content.FileProvider
+import coil.compose.AsyncImage
 import com.yousrasdn.businesscardgenerator.R
 import com.yousrasdn.businesscardgenerator.presentation.screens.create_card.CreateBusinessCardEvent
 import com.yousrasdn.businesscardgenerator.presentation.screens.create_card.CreateBusinessCardState
 import com.yousrasdn.businesscardgenerator.ui.theme.Spacing
+import java.io.File
 
 
 @Composable
@@ -41,11 +42,38 @@ fun CreateProfilePhotoScreen(
     uiState: CreateBusinessCardState,
     onEvent: (CreateBusinessCardEvent) -> Unit
 ) {
+    val context = LocalContext.current
+    
+    val photoUri = remember {
+        val file = File(context.cacheDir, "temp_photo_${System.currentTimeMillis()}.jpg")
+        FileProvider.getUriForFile(
+            context,
+            "${context.packageName}.fileprovider",
+            file
+        )
+    }
+    
     val galleryLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.PickVisualMedia()
     ) { uri ->
         uri?.let {
             onEvent(CreateBusinessCardEvent.UpdatePhoto(it.toString()))
+        }
+    }
+    
+    val cameraLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.TakePicture()
+    ) { success ->
+        if (success) {
+            onEvent(CreateBusinessCardEvent.UpdatePhoto(photoUri.toString()))
+        }
+    }
+    
+    val cameraPermissionLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        if (isGranted) {
+            cameraLauncher.launch(photoUri)
         }
     }
 
@@ -115,7 +143,9 @@ fun CreateProfilePhotoScreen(
         }
 
         OutlinedButton(
-            onClick = { /* TODO: Open camera */ },
+            onClick = { 
+                cameraPermissionLauncher.launch(android.Manifest.permission.CAMERA)
+            },
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(stringResource(R.string.photo_take_photo))

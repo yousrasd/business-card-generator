@@ -128,6 +128,7 @@ class CreateBusinessCardViewModel @Inject constructor(
             isLoading = false
         )
 
+        validateCurrentStep()
     }
 
     private fun handlePhotoDelete(value: String) {

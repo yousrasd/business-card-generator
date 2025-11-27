@@ -1,7 +1,7 @@
 package com.yousrasdn.businesscardgenerator.presentation.screens.create_card
 
 data class CreateBusinessCardState(
-    val currentStep: ProfileCreationStep = ProfileCreationStep.Photo,
+    val currentStep: ProfileCreationStep = ProfileCreationStep.BasicInfo,
     val isNextButtonDisabled: Boolean = true,
     
     val firstName: String = "",
