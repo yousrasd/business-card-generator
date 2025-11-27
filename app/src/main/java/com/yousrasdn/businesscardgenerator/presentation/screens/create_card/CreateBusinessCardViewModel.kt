@@ -2,14 +2,18 @@ package com.yousrasdn.businesscardgenerator.presentation.screens.create_card
 
 import android.app.Application
 import androidx.lifecycle.ViewModel
-import com.yousrasdn.businesscardgenerator.domain.validator.CardProfileFieldValidationResult
+import androidx.lifecycle.viewModelScope
+import com.yousrasdn.businesscardgenerator.R
+import com.yousrasdn.businesscardgenerator.domain.usecase.CardProfileFieldValidationResult
+import com.yousrasdn.businesscardgenerator.domain.usecase.ProfilePictureProcessingUseCase
 import com.yousrasdn.businesscardgenerator.domain.validator.StepValidatorFactory
-import com.yousrasdn.businesscardgenerator.domain.validator.ValidateCardProfileFieldsUseCase
+import com.yousrasdn.businesscardgenerator.domain.usecase.ValidateCardProfileFieldsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 const val TOTAL_CARD_CREATION_STEPS = 4
@@ -18,7 +22,8 @@ const val TOTAL_CARD_CREATION_STEPS = 4
 class CreateBusinessCardViewModel @Inject constructor(
     private val application: Application,
     private val validateFields: ValidateCardProfileFieldsUseCase,
-    private val stepValidatorFactory: StepValidatorFactory
+    private val stepValidatorFactory: StepValidatorFactory,
+    private val profilePictureProcessingUseCase: ProfilePictureProcessingUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(CreateBusinessCardState())
@@ -40,6 +45,8 @@ class CreateBusinessCardViewModel @Inject constructor(
             is CreateBusinessCardEvent.UpdateWebsite -> handleWebsiteUpdate(event.value)
             is CreateBusinessCardEvent.NextStep -> handleNextStep()
             is CreateBusinessCardEvent.PreviousStep -> handlePreviousStep()
+            is CreateBusinessCardEvent.UpdatePhoto -> handlePhotoUpdate(event.value)
+            is CreateBusinessCardEvent.DeletePhoto -> handlePhotoDelete(event.value)
         }
     }
 
@@ -104,6 +111,46 @@ class CreateBusinessCardViewModel @Inject constructor(
             websiteError = validation.errorOrNull()
         )
         validateCurrentStep()
+    }
+
+    private fun handlePhotoUpdate(value: String) {
+        _uiState.value = _uiState.value.copy(
+            isLoading = true
+        )
+
+        val uriPath = profilePictureProcessingUseCase.invoke(value)
+
+        _uiState.value = _uiState.value.copy(
+            profilePhotoUri = uriPath
+        )
+
+        _uiState.value = _uiState.value.copy(
+            isLoading = false
+        )
+
+    }
+
+    private fun handlePhotoDelete(value: String) {
+        viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(isLoading = true)
+            
+            val isSuccessful = profilePictureProcessingUseCase.deleteImage(value)
+
+            if(isSuccessful) {
+                _uiState.value = _uiState.value.copy(
+                    profilePhotoUri = null,
+                    isLoading = false
+                )
+            } else {
+                _uiState.value = _uiState.value.copy(isLoading = false)
+                _sideEffect.tryEmit(
+                    CreateBusinessCardSideEffect.ShowError(
+                        application.getString(R.string.error_delete_photo)
+                    )
+                )
+            }
+
+        }
     }
 
     private fun handleNextStep() {

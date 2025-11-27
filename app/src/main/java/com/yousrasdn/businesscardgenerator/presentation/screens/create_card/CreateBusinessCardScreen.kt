@@ -18,6 +18,8 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -44,12 +46,19 @@ import com.yousrasdn.businesscardgenerator.ui.theme.Spacing
 fun AddBusinessCardScreen(backStack: SnapshotStateList<Any>, createBusinessCardViewModel: CreateBusinessCardViewModel = hiltViewModel()) {
 
     val uiState = createBusinessCardViewModel.uiState.collectAsStateWithLifecycle()
+    val snackbarHostState = remember { SnackbarHostState() }
 
     LaunchedEffect(Unit) {
         createBusinessCardViewModel.sideEffect.collect { sideEffect ->
             when(sideEffect) {
                 is CreateBusinessCardSideEffect.NavigateBack -> {
                     backStack.removeLastOrNull()
+                }
+                is CreateBusinessCardSideEffect.ShowError -> {
+                    snackbarHostState.showSnackbar(
+                        message = sideEffect.message,
+                        duration = SnackbarDuration.Short
+                    )
                 }
                 else -> {}
             }
@@ -60,7 +69,8 @@ fun AddBusinessCardScreen(backStack: SnapshotStateList<Any>, createBusinessCardV
     Scaffold(
         topBar = {
             AddBusinessCardHeader(createBusinessCardViewModel::onEvent)
-        }
+        },
+        snackbarHost = { androidx.compose.material3.SnackbarHost(snackbarHostState) }
     ) { paddingValues ->
 
         Box(

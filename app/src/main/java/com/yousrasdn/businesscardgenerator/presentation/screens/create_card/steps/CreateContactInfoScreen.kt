@@ -73,7 +73,6 @@ fun CreateContactInfoScreen(
                 keyboardType = KeyboardType.Uri,
                 imeAction = ImeAction.Done
             ),
-
         )
     }
 }

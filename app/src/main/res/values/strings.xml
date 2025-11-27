@@ -28,7 +28,7 @@
     <string name="step2_subtitle">How can people reach you?</string>
     <string name="field_email">Email</string>
     <string name="field_email_hint">john@example.com</string>
-    <string name="field_phone">Phone</string>
+    <string name="field_phone">Phone (optional)</string>
     <string name="field_phone_hint">+1 (555) 123-4567</string>
     <string name="field_website">Website</string>
     <string name="field_website_hint">www.johndoe.com</string>
@@ -43,6 +43,7 @@
     <string name="photo_remove">Remove Photo</string>
     <string name="photo_skip">Skip for now</string>
     <string name="photo_no_photo">No Photo</string>
+    <string name="photo_selected">Photo selected</string>
     
     <!-- Profile Creation - Step 4: Review -->
     <string name="step4_title">Review Your Card</string>
@@ -91,6 +92,10 @@
     <string name="success_card_created">Business card created successfully!</string>
     <string name="success_card_updated">Business card updated successfully!</string>
     <string name="success_card_saved">Card saved</string>
+    
+    <!-- Error Messages -->
+    <string name="error_delete_photo">Oops! Unable to delete the photo. Please try again.</string>
+    <string name="error_save_photo">Failed to save photo. Please try again.</string>
     
     <!-- QR Code -->
     <string name="qr_code_title">Share Your Card</string>

@@ -1,5 +1,7 @@
 package com.yousrasdn.businesscardgenerator.domain.validator
 
+import com.yousrasdn.businesscardgenerator.domain.usecase.CardProfileFieldValidationResult
+import com.yousrasdn.businesscardgenerator.domain.usecase.ValidateCardProfileFieldsUseCase
 import com.yousrasdn.businesscardgenerator.presentation.screens.create_card.CreateBusinessCardState
 import javax.inject.Inject
 

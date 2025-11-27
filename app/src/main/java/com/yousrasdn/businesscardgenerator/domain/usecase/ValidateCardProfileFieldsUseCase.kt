@@ -1,6 +1,7 @@
-package com.yousrasdn.businesscardgenerator.domain.validator
+package com.yousrasdn.businesscardgenerator.domain.usecase
 
 import android.util.Patterns
+import com.google.i18n.phonenumbers.PhoneNumberUtil
 import com.yousrasdn.businesscardgenerator.R
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -18,14 +19,24 @@ class ValidateCardProfileFieldsUseCase @Inject constructor() {
     }
 
     fun validatePhone(phone: String): CardProfileFieldValidationResult {
-        val digitsOnly = phone.replace(Regex("[^0-9]"), "")
+        if (phone.isBlank()) return CardProfileFieldValidationResult.Success
         
-        return when {
-            phone.isBlank() -> CardProfileFieldValidationResult.Success
-            digitsOnly.length < 10 -> CardProfileFieldValidationResult.Error(R.string.error_phone_too_short)
-            !Patterns.PHONE.matcher(phone).matches() -> 
-                CardProfileFieldValidationResult.Error(R.string.error_phone_invalid)
-            else -> CardProfileFieldValidationResult.Success
+        return try {
+            val phoneUtil = PhoneNumberUtil.getInstance()
+            val numberProto = phoneUtil.parse(phone, "US")
+            
+            when {
+                !phoneUtil.isValidNumber(numberProto) -> 
+                    CardProfileFieldValidationResult.Error(R.string.error_phone_invalid)
+                else -> CardProfileFieldValidationResult.Success
+            }
+        } catch (e: Exception) {
+            // fallback to default validation if parsing fails
+            val digitsOnly = phone.replace(Regex("[^0-9+]"), "")
+            when {
+                digitsOnly.length < 10 -> CardProfileFieldValidationResult.Error(R.string.error_phone_too_short)
+                else -> CardProfileFieldValidationResult.Error(R.string.error_phone_invalid)
+            }
         }
     }
 

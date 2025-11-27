@@ -11,6 +11,9 @@ sealed interface CreateBusinessCardEvent{
     data class UpdatePhone(val value: String) : CreateBusinessCardEvent
     data class UpdateWebsite(val value: String) : CreateBusinessCardEvent
 
+    data class UpdatePhoto(val value: String) : CreateBusinessCardEvent
+    data class DeletePhoto(val value: String) : CreateBusinessCardEvent
+
 
 
     data object NextStep : CreateBusinessCardEvent
