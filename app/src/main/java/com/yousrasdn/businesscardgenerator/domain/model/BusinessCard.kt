@@ -1,6 +1,5 @@
 package com.yousrasdn.businesscardgenerator.domain.model
 
-// Domain model - clean, no framework dependencies
 data class BusinessCard(
     val id: Long = 0,
     val firstName: String,

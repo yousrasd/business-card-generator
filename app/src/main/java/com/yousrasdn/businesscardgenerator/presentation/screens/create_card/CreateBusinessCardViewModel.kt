@@ -4,9 +4,9 @@ import android.app.Application
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.yousrasdn.businesscardgenerator.R
-import com.yousrasdn.businesscardgenerator.data.repository.BusinessCardRepository
 import com.yousrasdn.businesscardgenerator.domain.usecase.CardProfileFieldValidationResult
 import com.yousrasdn.businesscardgenerator.domain.usecase.ProfilePictureProcessingUseCase
+import com.yousrasdn.businesscardgenerator.domain.usecase.SaveBusinessCardUseCase
 import com.yousrasdn.businesscardgenerator.domain.validator.StepValidatorFactory
 import com.yousrasdn.businesscardgenerator.domain.usecase.ValidateCardProfileFieldsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -26,7 +26,7 @@ class CreateBusinessCardViewModel @Inject constructor(
     private val validateFields: ValidateCardProfileFieldsUseCase,
     private val stepValidatorFactory: StepValidatorFactory,
     private val profilePictureProcessingUseCase: ProfilePictureProcessingUseCase,
-    private val businessCardRepository:  BusinessCardRepository
+    private val saveBusinessCardUseCase: SaveBusinessCardUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(CreateBusinessCardState())
@@ -172,22 +172,24 @@ class CreateBusinessCardViewModel @Inject constructor(
             val businessCard = _uiState.value.mapToBusinessCard()
 
             viewModelScope.launch {
-                val result = businessCardRepository.saveCard(businessCard)
-                if (result.isSuccess) {
+                val result = saveBusinessCardUseCase(businessCard)
+                
+                result.onSuccess { cardId ->
                     _sideEffect.tryEmit(
                         CreateBusinessCardSideEffect.CardCreationSuccess
                     )
-                } else {
-                    _sideEffect.tryEmit(CreateBusinessCardSideEffect.ShowError(
-                        application.getString(R.string.error_save_card)
-                    ))
-
+                }.onFailure { error ->
+                    _sideEffect.tryEmit(
+                        CreateBusinessCardSideEffect.ShowError(
+                            application.getString(R.string.error_save_card)
+                        )
+                    )
                 }
+                
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,
                     loadingMessage = null
                 )
-
             }
         }
     }

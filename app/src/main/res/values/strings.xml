@@ -29,6 +29,7 @@
     <string name="field_email">Email</string>
     <string name="field_email_hint">john@example.com</string>
     <string name="field_phone">Phone (optional)</string>
+    <string name="field_phone_view_profile">Phone</string>
     <string name="field_phone_hint">+1 (555) 123-4567</string>
     <string name="field_website">Website</string>
     <string name="field_website_hint">www.johndoe.com</string>
@@ -215,4 +216,21 @@
     <string name="optional">(Optional)</string>
     <string name="or">or</string>
     <string name="and">and</string>
+    
+    <!-- Home Screen -->
+    <string name="home_title">My Card</string>
+    <string name="home_my_digital_card">My Digital Card</string>
+    <string name="home_share">Share</string>
+    <string name="home_qr_code">QR Code</string>
+    <string name="home_edit">Edit</string>
+    <string name="home_recent_activity">Recent Activity</string>
+    <string name="home_no_recent_activity">No scanned cards yet</string>
+    <string name="home_loading_card">Loading your card…</string>
+    <string name="home_no_card">No card found</string>
+    <string name="home_error_load_card">Failed to load card</string>
+    <string name="btn_retry">Retry</string>
+    
+    <!-- Content Descriptions -->
+    <string name="cd_clear_text">Clear text</string>
+    <string name="cd_completed_step">Completed step</string>
 </resources>
