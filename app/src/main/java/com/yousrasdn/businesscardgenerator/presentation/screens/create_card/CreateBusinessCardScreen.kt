@@ -1,5 +1,6 @@
 package com.yousrasdn.businesscardgenerator.presentation.screens.create_card
 
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,6 +20,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -32,6 +34,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.yousrasdn.businesscardgenerator.BuildConfig
 import com.yousrasdn.businesscardgenerator.R
 import com.yousrasdn.businesscardgenerator.core.navigation.ScreensListing
 import com.yousrasdn.businesscardgenerator.core.ui.components.LoadingOverlay
@@ -73,9 +76,9 @@ fun AddBusinessCardScreen(backStack: SnapshotStateList<Any>, createBusinessCardV
 
     Scaffold(
         topBar = {
-            AddBusinessCardHeader(createBusinessCardViewModel::onEvent)
+            AddBusinessCardHeader(createBusinessCardViewModel::onEvent, backStack)
         },
-        snackbarHost = { androidx.compose.material3.SnackbarHost(snackbarHostState) }
+        snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { paddingValues ->
 
         Box(
@@ -145,7 +148,7 @@ fun AddBusinessCardScreen(backStack: SnapshotStateList<Any>, createBusinessCardV
 
 
 @Composable
-fun AddBusinessCardHeader(goBack: (CreateBusinessCardEvent) -> Unit) {
+fun AddBusinessCardHeader(goBack: (CreateBusinessCardEvent) -> Unit, backStack: SnapshotStateList<Any>) {
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
@@ -157,7 +160,19 @@ fun AddBusinessCardHeader(goBack: (CreateBusinessCardEvent) -> Unit) {
             Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
         }
 
-        Text(text = stringResource(id=R.string.create_card_title))
+        Text(
+            text = stringResource(id=R.string.create_card_title),
+            modifier =  if (BuildConfig.DEBUG) {
+                Modifier.combinedClickable(
+                    onClick = {},
+                    onLongClick = {
+                            backStack.add(ScreensListing.DevTool)
+                    }
+                )
+            } else {
+                Modifier
+            }
+        )
     }
 }
 

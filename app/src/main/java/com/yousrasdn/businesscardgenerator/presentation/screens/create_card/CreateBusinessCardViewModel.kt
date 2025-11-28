@@ -3,7 +3,10 @@ package com.yousrasdn.businesscardgenerator.presentation.screens.create_card
 import android.app.Application
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.yousrasdn.businesscardgenerator.BuildConfig
 import com.yousrasdn.businesscardgenerator.R
+import com.yousrasdn.businesscardgenerator.debug.DevToolsRepository
+import com.yousrasdn.businesscardgenerator.debug.PrefillData
 import com.yousrasdn.businesscardgenerator.domain.usecase.CardProfileFieldValidationResult
 import com.yousrasdn.businesscardgenerator.domain.usecase.ProfilePictureProcessingUseCase
 import com.yousrasdn.businesscardgenerator.domain.usecase.SaveBusinessCardUseCase
@@ -26,7 +29,8 @@ class CreateBusinessCardViewModel @Inject constructor(
     private val validateFields: ValidateCardProfileFieldsUseCase,
     private val stepValidatorFactory: StepValidatorFactory,
     private val profilePictureProcessingUseCase: ProfilePictureProcessingUseCase,
-    private val saveBusinessCardUseCase: SaveBusinessCardUseCase
+    private val saveBusinessCardUseCase: SaveBusinessCardUseCase,
+    private val devToolsRepository: DevToolsRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(CreateBusinessCardState())
@@ -36,6 +40,28 @@ class CreateBusinessCardViewModel @Inject constructor(
         extraBufferCapacity = 1
     )
     val sideEffect = _sideEffect.asSharedFlow()
+    
+    init {
+        if (BuildConfig.DEBUG) {
+            viewModelScope.launch {
+                devToolsRepository.prefillData.collect { prefillData ->
+                    prefillData?.let { applyPrefillData(it) }
+                }
+            }
+        }
+    }
+    
+    private fun applyPrefillData(data: PrefillData) {
+        _uiState.value = _uiState.value.copy(
+            firstName = data.firstName,
+            lastName = data.lastName,
+            jobTitle = data.jobTitle,
+            company = data.company,
+            email = data.email,
+            phone = data.phone,
+            website = data.website,
+        )
+    }
 
     fun onEvent(event: CreateBusinessCardEvent) {
         when(event) {
@@ -214,4 +240,7 @@ class CreateBusinessCardViewModel @Inject constructor(
         (this as? CardProfileFieldValidationResult.Error)?.let {
             application.getString(it.errorMessageResId)
         }
+
+
+
 }

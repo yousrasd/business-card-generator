@@ -1,7 +1,9 @@
 package com.yousrasdn.businesscardgenerator.presentation.screens.home
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -47,11 +49,13 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
+import com.yousrasdn.businesscardgenerator.BuildConfig
 import com.yousrasdn.businesscardgenerator.R
+import com.yousrasdn.businesscardgenerator.core.navigation.ScreensListing
 import com.yousrasdn.businesscardgenerator.domain.model.BusinessCard
 import com.yousrasdn.businesscardgenerator.ui.theme.Spacing
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun HomeScreen(
     backStack: SnapshotStateList<Any>,
@@ -62,7 +66,23 @@ fun HomeScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(stringResource(R.string.home_title)) },
+                title = { 
+                    Text(
+                        text = stringResource(R.string.home_title),
+                        modifier =  if (BuildConfig.DEBUG) {
+                            Modifier.combinedClickable(
+                                onClick = {},
+                                onLongClick = {
+                                    backStack.add(ScreensListing.DevTool)
+                                }
+                            )
+                        }else {
+                            Modifier
+                        }
+
+
+                    )
+                },
                 navigationIcon = {
                     IconButton(onClick = { /* TODO: Open drawer */ }) {
                         Icon(Icons.Default.Menu, contentDescription = stringResource(R.string.cd_menu))

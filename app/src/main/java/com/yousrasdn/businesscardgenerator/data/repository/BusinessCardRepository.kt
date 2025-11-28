@@ -16,6 +16,8 @@ interface BusinessCardRepository {
     fun getMyCard(): Flow<BusinessCard?>
     suspend fun getCardById(id: Long): BusinessCard?
     fun getAllCards(): Flow<List<BusinessCard>>
+
+    suspend fun clearAllTables()
 }
 
 @Singleton
@@ -51,5 +53,9 @@ class BusinessCardRepositoryImpl @Inject constructor(
         return dao.getAllCards().map { entities ->
             entities.map { it.toDomain() }
         }
+    }
+
+    override suspend fun clearAllTables() {
+        dao.deleteAll()
     }
 }

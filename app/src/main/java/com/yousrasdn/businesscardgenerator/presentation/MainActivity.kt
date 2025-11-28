@@ -19,6 +19,7 @@ import androidx.navigation3.ui.NavDisplay
 import com.yousrasdn.businesscardgenerator.core.navigation.ScreensListing
 import com.yousrasdn.businesscardgenerator.presentation.root.RootDestination
 import com.yousrasdn.businesscardgenerator.presentation.root.RootViewModel
+import com.yousrasdn.businesscardgenerator.debug.DevToolsScreen
 import com.yousrasdn.businesscardgenerator.presentation.screens.create_card.AddBusinessCardScreen
 import com.yousrasdn.businesscardgenerator.presentation.screens.home.HomeScreen
 import com.yousrasdn.businesscardgenerator.presentation.screens.onboarding.OnboardingScreen
@@ -82,10 +83,11 @@ fun AppNavigation(startDestination: Any) {
                 entry<ScreensListing.Home> {
                     HomeScreen(backStack)
                 }
-                entry<String> { entry ->
-                    when (entry) {
-                        "ProfileView" -> ProfileViewScreen(backStack)
-                    }
+                entry<ScreensListing.Profile> {
+                    ProfileViewScreen(backStack)
+                }
+                entry<ScreensListing.DevTool> {
+                    DevToolsScreen(backStack)
                 }
             },
         )

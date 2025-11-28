@@ -32,4 +32,7 @@ interface BusinessCardDao {
     
     @Query("DELETE FROM business_cards WHERE id = :id")
     suspend fun deleteById(id: Long)
+
+    @Query("DELETE FROM business_cards")
+    suspend fun deleteAll()
 }
