@@ -30,14 +30,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.yousrasdn.businesscardgenerator.R
-import com.yousrasdn.businesscardgenerator.presentation.screens.create_card.CreateBusinessCardEvent
-import com.yousrasdn.businesscardgenerator.presentation.screens.create_card.CreateBusinessCardState
+import com.yousrasdn.businesscardgenerator.presentation.screens.create_card.BusinessCardFormEvent
+import com.yousrasdn.businesscardgenerator.presentation.screens.create_card.BusinessCardFormState
 import com.yousrasdn.businesscardgenerator.ui.theme.Spacing
 
 @Composable
 fun ReviewAndSaveCardScreen(
-    uiState: CreateBusinessCardState,
-    onEvent: (CreateBusinessCardEvent) -> Unit
+    uiState: BusinessCardFormState,
+    onEvent: (BusinessCardFormEvent) -> Unit
 ) {
     Column(
         modifier = Modifier.fillMaxWidth(),

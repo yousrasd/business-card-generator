@@ -15,14 +15,14 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import com.yousrasdn.businesscardgenerator.R
 import com.yousrasdn.businesscardgenerator.core.ui.components.ValidatedTextField
-import com.yousrasdn.businesscardgenerator.presentation.screens.create_card.CreateBusinessCardEvent
-import com.yousrasdn.businesscardgenerator.presentation.screens.create_card.CreateBusinessCardState
+import com.yousrasdn.businesscardgenerator.presentation.screens.create_card.BusinessCardFormEvent
+import com.yousrasdn.businesscardgenerator.presentation.screens.create_card.BusinessCardFormState
 import com.yousrasdn.businesscardgenerator.ui.theme.Spacing
 
 @Composable
 fun CreateContactInfoScreen(
-    uiState: CreateBusinessCardState,
-    onEvent: (CreateBusinessCardEvent) -> Unit
+    uiState: BusinessCardFormState,
+    onEvent: (BusinessCardFormEvent) -> Unit
 ) {
     Column(
         modifier = Modifier.fillMaxWidth(),
@@ -36,7 +36,7 @@ fun CreateContactInfoScreen(
         ValidatedTextField(
             value = uiState.email,
             onValueChange = { newText ->
-                onEvent(CreateBusinessCardEvent.UpdateEmail(newText))
+                onEvent(BusinessCardFormEvent.UpdateEmail(newText))
             },
             label = stringResource(R.string.field_email),
             errorMessage = uiState.emailError,
@@ -50,7 +50,7 @@ fun CreateContactInfoScreen(
         ValidatedTextField(
             value = uiState.phone,
             onValueChange = { newText ->
-                onEvent(CreateBusinessCardEvent.UpdatePhone(newText))
+                onEvent(BusinessCardFormEvent.UpdatePhone(newText))
             },
             label = stringResource(R.string.field_phone),
             errorMessage = uiState.phoneError,
@@ -64,7 +64,7 @@ fun CreateContactInfoScreen(
         ValidatedTextField(
             value = uiState.website,
             onValueChange = { newText ->
-                onEvent(CreateBusinessCardEvent.UpdateWebsite(newText))
+                onEvent(BusinessCardFormEvent.UpdateWebsite(newText))
             },
             label = stringResource(R.string.field_website),
             errorMessage = uiState.websiteError,

@@ -30,14 +30,11 @@ class ProfileViewModel @Inject constructor(
             ProfileViewEvent.ShowQRCode -> {
                 // TODO: Show QR code
             }
-            ProfileViewEvent.EditCard -> {
-                // TODO: Navigate to edit
-            }
             ProfileViewEvent.DeleteCard -> {
                 // TODO: Delete card
             }
             ProfileViewEvent.Back -> {
-                // TODO: Navigate back
+                // Navigation handled in screen
             }
         }
     }

@@ -44,7 +44,7 @@ class DevToolsManager @Inject constructor(
             jobTitle = "Senior Android Developer",
             company = "Tech Corp",
             email = "john.doe@techcorp.com",
-            phone = "+1 (555) 123-4567",
+            phone = "+14389789878",
             website = "www.johndoe.com",
             bio = "Passionate Android developer with 5+ years of experience building beautiful and performant mobile applications."
         )
@@ -60,7 +60,7 @@ class DevToolsManager @Inject constructor(
             jobTitle = "Product Designer",
             company = "Design Studio",
             email = "jane.smith@designstudio.com",
-            phone = "+1 (555) 987-6543",
+            phone = "+14389789878",
             website = "www.janesmith.design",
             bio = "Creative product designer focused on user-centered design and delightful experiences."
         )

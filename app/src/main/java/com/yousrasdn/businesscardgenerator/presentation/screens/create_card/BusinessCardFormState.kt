@@ -2,9 +2,12 @@ package com.yousrasdn.businesscardgenerator.presentation.screens.create_card
 
 import com.yousrasdn.businesscardgenerator.domain.model.BusinessCard
 
-data class CreateBusinessCardState(
+data class BusinessCardFormState(
     val currentStep: ProfileCreationStep = ProfileCreationStep.BasicInfo,
     val isNextButtonDisabled: Boolean = true,
+    
+    val cardId: Long? = null,
+    val isEditMode: Boolean = false,
     
     val firstName: String = "",
     val lastName: String = "",
@@ -27,8 +30,8 @@ data class CreateBusinessCardState(
     val loadingMessage: String? = null
 )
 
-
-fun CreateBusinessCardState.mapToBusinessCard(): BusinessCard = BusinessCard(
+fun BusinessCardFormState.mapToBusinessCard(): BusinessCard = BusinessCard(
+    id = cardId ?: 0,
     firstName = firstName,
     lastName = lastName,
     jobTitle = jobTitle,
@@ -37,4 +40,17 @@ fun CreateBusinessCardState.mapToBusinessCard(): BusinessCard = BusinessCard(
     phone = phone,
     website = website,
     photoPath = profilePhotoUri
+)
+
+fun BusinessCard.toBusinessCardFormState(): BusinessCardFormState = BusinessCardFormState(
+    cardId = id,
+    isEditMode = true,
+    firstName = firstName,
+    lastName = lastName,
+    jobTitle = jobTitle,
+    company = company,
+    email = email,
+    phone = phone,
+    website = website,
+    profilePhotoUri = photoPath
 )

@@ -33,9 +33,6 @@ class HomeViewModel @Inject constructor(
             HomeScreenEvent.ShowQRCode -> {
                 // TODO: Show QR code
             }
-            HomeScreenEvent.EditCard -> {
-                // TODO: Navigate to edit
-            }
             HomeScreenEvent.RefreshCard -> {
                 loadCard()
             }

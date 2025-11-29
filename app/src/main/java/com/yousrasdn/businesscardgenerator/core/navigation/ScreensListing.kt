@@ -1,10 +1,10 @@
 package com.yousrasdn.businesscardgenerator.core.navigation
 
-data object ScreensListing {
-    data object CardProfile
-    data object Onboarding
-    data object ScanCard
-    data object Home
-    data object Profile
-    data object DevTool
+sealed interface ScreensListing {
+    data class CardProfile(val isEditMode: Boolean = false) : ScreensListing
+    data object Onboarding : ScreensListing
+    data object ScanCard : ScreensListing
+    data object Home : ScreensListing
+    data object Profile : ScreensListing
+    data object DevTool : ScreensListing
 }

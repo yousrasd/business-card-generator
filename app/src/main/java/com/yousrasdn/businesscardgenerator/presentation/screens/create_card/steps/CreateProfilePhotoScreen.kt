@@ -42,16 +42,16 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.FileProvider
 import coil.compose.AsyncImage
 import com.yousrasdn.businesscardgenerator.R
-import com.yousrasdn.businesscardgenerator.presentation.screens.create_card.CreateBusinessCardEvent
-import com.yousrasdn.businesscardgenerator.presentation.screens.create_card.CreateBusinessCardState
+import com.yousrasdn.businesscardgenerator.presentation.screens.create_card.BusinessCardFormEvent
+import com.yousrasdn.businesscardgenerator.presentation.screens.create_card.BusinessCardFormState
 import com.yousrasdn.businesscardgenerator.ui.theme.Spacing
 import java.io.File
 
 
 @Composable
 fun CreateProfilePhotoScreen(
-    uiState: CreateBusinessCardState,
-    onEvent: (CreateBusinessCardEvent) -> Unit
+    uiState: BusinessCardFormState,
+    onEvent: (BusinessCardFormEvent) -> Unit
 ) {
     val context = LocalContext.current
     
@@ -71,7 +71,7 @@ fun CreateProfilePhotoScreen(
         ActivityResultContracts.PickVisualMedia()
     ) { uri ->
         uri?.let {
-            onEvent(CreateBusinessCardEvent.UpdatePhoto(it.toString()))
+            onEvent(BusinessCardFormEvent.UpdatePhoto(it.toString()))
         }
     }
     
@@ -79,7 +79,7 @@ fun CreateProfilePhotoScreen(
         ActivityResultContracts.TakePicture()
     ) { success ->
         if (success) {
-            onEvent(CreateBusinessCardEvent.UpdatePhoto(photoUri.toString()))
+            onEvent(BusinessCardFormEvent.UpdatePhoto(photoUri.toString()))
         }
     }
 
@@ -175,7 +175,7 @@ fun CreateProfilePhotoScreen(
         if (uiState.profilePhotoUri != null) {
             TextButton(
                 onClick = {
-                    onEvent(CreateBusinessCardEvent.DeletePhoto(uiState.profilePhotoUri))
+                    onEvent(BusinessCardFormEvent.DeletePhoto(uiState.profilePhotoUri))
                 },
                 modifier = Modifier.fillMaxWidth()
             ) {

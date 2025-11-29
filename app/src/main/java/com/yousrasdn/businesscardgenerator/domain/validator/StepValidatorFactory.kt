@@ -1,6 +1,6 @@
 package com.yousrasdn.businesscardgenerator.domain.validator
 
-import com.yousrasdn.businesscardgenerator.presentation.screens.create_card.CreateBusinessCardState
+import com.yousrasdn.businesscardgenerator.presentation.screens.create_card.BusinessCardFormState
 import com.yousrasdn.businesscardgenerator.presentation.screens.create_card.ProfileCreationStep
 import javax.inject.Inject
 
@@ -17,5 +17,5 @@ class StepValidatorFactory @Inject constructor(
 }
 
 object AlwaysValidValidator : StepValidator {
-    override fun validate(state: CreateBusinessCardState) = true
+    override fun validate(state: BusinessCardFormState) = true
 }

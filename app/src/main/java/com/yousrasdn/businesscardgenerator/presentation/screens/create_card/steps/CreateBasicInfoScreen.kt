@@ -22,14 +22,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.yousrasdn.businesscardgenerator.R
 import com.yousrasdn.businesscardgenerator.core.ui.components.ValidatedTextField
-import com.yousrasdn.businesscardgenerator.presentation.screens.create_card.CreateBusinessCardEvent
-import com.yousrasdn.businesscardgenerator.presentation.screens.create_card.CreateBusinessCardState
+import com.yousrasdn.businesscardgenerator.presentation.screens.create_card.BusinessCardFormEvent
+import com.yousrasdn.businesscardgenerator.presentation.screens.create_card.BusinessCardFormState
 import com.yousrasdn.businesscardgenerator.ui.theme.Spacing
 
 @Composable
 fun CreateBasicInfoScreen(
-    uiState: CreateBusinessCardState,
-    onEvent: (CreateBusinessCardEvent) -> Unit
+    uiState: BusinessCardFormState,
+    onEvent: (BusinessCardFormEvent) -> Unit
 ) {
     Column(
         modifier = Modifier.fillMaxWidth(),
@@ -44,7 +44,7 @@ fun CreateBasicInfoScreen(
         ValidatedTextField(
             value = uiState.firstName,
             onValueChange = { newText ->
-                onEvent(CreateBusinessCardEvent.UpdateFirstName(newText))
+                onEvent(BusinessCardFormEvent.UpdateFirstName(newText))
             },
             label = stringResource(R.string.field_first_name),
             errorMessage = uiState.firstNameError,
@@ -57,7 +57,7 @@ fun CreateBasicInfoScreen(
         ValidatedTextField(
             value = uiState.lastName,
             onValueChange = { newText ->
-                onEvent(CreateBusinessCardEvent.UpdateLastName(newText))
+                onEvent(BusinessCardFormEvent.UpdateLastName(newText))
             },
             label = stringResource(R.string.field_last_name),
             errorMessage = uiState.lastNameError,
@@ -70,7 +70,7 @@ fun CreateBasicInfoScreen(
         ValidatedTextField(
             value = uiState.jobTitle,
             onValueChange = { newText ->
-                onEvent(CreateBusinessCardEvent.UpdateJobTitle(newText))
+                onEvent(BusinessCardFormEvent.UpdateJobTitle(newText))
             },
             label = stringResource(R.string.field_job_title),
             errorMessage = uiState.jobTitleError,
@@ -83,7 +83,7 @@ fun CreateBasicInfoScreen(
         ValidatedTextField(
             value = uiState.company,
             onValueChange = { newText ->
-                onEvent(CreateBusinessCardEvent.UpdateCompany(newText))
+                onEvent(BusinessCardFormEvent.UpdateCompany(newText))
             },
             label = stringResource(R.string.field_company),
             errorMessage = uiState.companyError,
@@ -104,7 +104,7 @@ fun CreateBasicInfoScreen(
 @Preview
 fun CreateBasicInfoScreenPreview() {
     CreateBasicInfoScreen(
-        uiState = CreateBusinessCardState(),
+        uiState = BusinessCardFormState(),
         onEvent = {}
     )
 }

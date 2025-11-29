@@ -48,26 +48,38 @@ import com.yousrasdn.businesscardgenerator.ui.theme.Spacing
 
 
 @Composable
-fun AddBusinessCardScreen(backStack: SnapshotStateList<Any>, createBusinessCardViewModel: CreateBusinessCardViewModel = hiltViewModel()) {
-
-    val uiState = createBusinessCardViewModel.uiState.collectAsStateWithLifecycle()
+fun BusinessCardFormScreen(
+    backStack: SnapshotStateList<Any>,
+    isEditMode: Boolean = false,
+    businessCardFormViewModel: BusinessCardFormViewModel = hiltViewModel()
+) {
+    val uiState = businessCardFormViewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
+    
+    LaunchedEffect(isEditMode) {
+        if (isEditMode) {
+            businessCardFormViewModel.loadCardForEdit()
+        }
+    }
 
     LaunchedEffect(Unit) {
-        createBusinessCardViewModel.sideEffect.collect { sideEffect ->
+        businessCardFormViewModel.sideEffect.collect { sideEffect ->
             when(sideEffect) {
-                is CreateBusinessCardSideEffect.NavigateBack -> {
+                is BusinessCardFormSideEffect.NavigateBack -> {
                     backStack.removeLastOrNull()
                 }
-                is CreateBusinessCardSideEffect.ShowError -> {
+                is BusinessCardFormSideEffect.ShowError -> {
                     snackbarHostState.showSnackbar(
                         message = sideEffect.message,
                         duration = SnackbarDuration.Short
                     )
                 }
-                is CreateBusinessCardSideEffect.CardCreationSuccess -> {
+                is BusinessCardFormSideEffect.CardCreationSuccess -> {
                     backStack.clear()
                     backStack.add(ScreensListing.Home)
+                }
+                is BusinessCardFormSideEffect.CardUpdateSuccess -> {
+                    backStack.removeLastOrNull()
                 }
             }
         }
@@ -76,7 +88,7 @@ fun AddBusinessCardScreen(backStack: SnapshotStateList<Any>, createBusinessCardV
 
     Scaffold(
         topBar = {
-            AddBusinessCardHeader(createBusinessCardViewModel::onEvent, backStack)
+            BusinessCardFormHeader(businessCardFormViewModel::onEvent, backStack, uiState.value.isEditMode)
         },
         snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { paddingValues ->
@@ -105,22 +117,22 @@ fun AddBusinessCardScreen(backStack: SnapshotStateList<Any>, createBusinessCardV
 
                 when(uiState.value.currentStep) {
                     ProfileCreationStep.BasicInfo -> {
-                        CreateBasicInfoScreen(uiState.value, createBusinessCardViewModel::onEvent)
+                        CreateBasicInfoScreen(uiState.value, businessCardFormViewModel::onEvent)
                     }
                     ProfileCreationStep.ContactInfo -> {
                         CreateContactInfoScreen(
-                            uiState.value, createBusinessCardViewModel::onEvent
+                            uiState.value, businessCardFormViewModel::onEvent
                         )
                     }
                     ProfileCreationStep.Photo -> {
                         CreateProfilePhotoScreen(
-                            uiState.value, createBusinessCardViewModel::onEvent
+                            uiState.value, businessCardFormViewModel::onEvent
                         )
                     }
 
                     ProfileCreationStep.Review -> {
                         ReviewAndSaveCardScreen(
-                            uiState.value, createBusinessCardViewModel::onEvent
+                            uiState.value, businessCardFormViewModel::onEvent
                         )
                     }
                 }
@@ -128,7 +140,7 @@ fun AddBusinessCardScreen(backStack: SnapshotStateList<Any>, createBusinessCardV
                 Spacer(modifier = Modifier.weight(1f, fill = true))
 
                 FooterContinueButton(
-                    onEvent = createBusinessCardViewModel::onEvent,
+                    onEvent = businessCardFormViewModel::onEvent,
                     isDisabled = uiState.value.isNextButtonDisabled,
                     isLastScreen = uiState.value.currentStep.isLastStep()
                 )
@@ -148,7 +160,11 @@ fun AddBusinessCardScreen(backStack: SnapshotStateList<Any>, createBusinessCardV
 
 
 @Composable
-fun AddBusinessCardHeader(goBack: (CreateBusinessCardEvent) -> Unit, backStack: SnapshotStateList<Any>) {
+fun BusinessCardFormHeader(
+    goBack: (BusinessCardFormEvent) -> Unit,
+    backStack: SnapshotStateList<Any>,
+    isEditMode: Boolean
+) {
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
@@ -156,12 +172,12 @@ fun AddBusinessCardHeader(goBack: (CreateBusinessCardEvent) -> Unit, backStack: 
         horizontal = Spacing.medium,
         vertical = Spacing.medium
     ).fillMaxWidth()) {
-        Button(onClick = {goBack(CreateBusinessCardEvent.PreviousStep)}) {
+        Button(onClick = {goBack(BusinessCardFormEvent.PreviousStep)}) {
             Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
         }
 
         Text(
-            text = stringResource(id=R.string.create_card_title),
+            text = stringResource(id = if (isEditMode) R.string.edit_card_title else R.string.create_card_title),
             modifier =  if (BuildConfig.DEBUG) {
                 Modifier.combinedClickable(
                     onClick = {},
@@ -179,7 +195,7 @@ fun AddBusinessCardHeader(goBack: (CreateBusinessCardEvent) -> Unit, backStack: 
 
 @Composable
 fun FooterContinueButton(
-    onEvent: (CreateBusinessCardEvent) -> Unit,
+    onEvent: (BusinessCardFormEvent) -> Unit,
     isDisabled: Boolean = false,
     isLastScreen: Boolean = false
 ) {
@@ -190,7 +206,7 @@ fun FooterContinueButton(
         Button(
             modifier = Modifier.fillMaxWidth(),
             enabled = !isDisabled,
-            onClick = {onEvent(CreateBusinessCardEvent.NextStep)}
+            onClick = {onEvent(BusinessCardFormEvent.NextStep)}
         )
         {
             Text(
@@ -203,10 +219,3 @@ fun FooterContinueButton(
 }
 
 
-@Preview
-@Composable
-fun AddBusinessCardScreenPreview() {
-    AddBusinessCardScreen(
-        backStack = remember { mutableStateListOf() },
-    )
-}

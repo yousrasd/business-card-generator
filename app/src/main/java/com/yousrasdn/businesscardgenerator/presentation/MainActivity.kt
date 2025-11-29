@@ -20,7 +20,7 @@ import com.yousrasdn.businesscardgenerator.core.navigation.ScreensListing
 import com.yousrasdn.businesscardgenerator.presentation.root.RootDestination
 import com.yousrasdn.businesscardgenerator.presentation.root.RootViewModel
 import com.yousrasdn.businesscardgenerator.debug.DevToolsScreen
-import com.yousrasdn.businesscardgenerator.presentation.screens.create_card.AddBusinessCardScreen
+import com.yousrasdn.businesscardgenerator.presentation.screens.create_card.BusinessCardFormScreen
 import com.yousrasdn.businesscardgenerator.presentation.screens.home.HomeScreen
 import com.yousrasdn.businesscardgenerator.presentation.screens.onboarding.OnboardingScreen
 import com.yousrasdn.businesscardgenerator.presentation.screens.profile.ProfileViewScreen
@@ -74,8 +74,8 @@ fun AppNavigation(startDestination: Any) {
                 entry<ScreensListing.Onboarding> {
                     OnboardingScreen(backStack)
                 }
-                entry<ScreensListing.CardProfile> {
-                    AddBusinessCardScreen(backStack)
+                entry<ScreensListing.CardProfile> { screen ->
+                    BusinessCardFormScreen(backStack, isEditMode = screen.isEditMode)
                 }
                 entry<ScreensListing.ScanCard> {
                     ScanCardScreen(backStack)

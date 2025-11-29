@@ -50,6 +50,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.yousrasdn.businesscardgenerator.R
+import com.yousrasdn.businesscardgenerator.core.navigation.ScreensListing
 import com.yousrasdn.businesscardgenerator.domain.model.BusinessCard
 import com.yousrasdn.businesscardgenerator.ui.theme.Spacing
 
@@ -95,7 +96,9 @@ fun ProfileViewScreen(
         floatingActionButton = {
             if (uiState.card != null) {
                 FloatingActionButton(
-                    onClick = { viewModel.onEvent(ProfileViewEvent.EditCard) },
+                    onClick = {
+                        backStack.add(ScreensListing.CardProfile(isEditMode = true))
+                    },
                     containerColor = MaterialTheme.colorScheme.primary
                 ) {
                     Icon(

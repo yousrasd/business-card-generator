@@ -12,9 +12,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 
 private val DarkColorScheme = darkColorScheme(
-    primary = BurntOrange,
-    secondary = GoldenAmber,
-    tertiary = SoftRed,
+    primary = PetraRose,
+    secondary = PetraSandstone,
+    tertiary = PetraTerracotta,
     background = Color(0xFF0F1419),
     surface = Color(0xFF1A1F24),
     surfaceVariant = Color(0xFF2A2F35),
@@ -23,16 +23,16 @@ private val DarkColorScheme = darkColorScheme(
     onTertiary = Color.White,
     onBackground = Color(0xFFE8EAED),
     onSurface = Color(0xFFE8EAED),
-    primaryContainer = OrangeDark,
-    secondaryContainer = AmberDark,
-    tertiaryContainer = RedDark,
+    primaryContainer = PetraRoseDark,
+    secondaryContainer = PetraSandstoneDark,
+    tertiaryContainer = PetraTerracottaDark,
     outline = Color(0xFF3A3F45)
 )
 
 private val LightColorScheme = lightColorScheme(
-    primary = BurntOrange,
-    secondary = GoldenAmber,
-    tertiary = SoftRed,
+    primary = PetraRose,
+    secondary = PetraSandstone,
+    tertiary = PetraTerracotta,
     background = Color(0xFFFAFBFC),
     surface = Color.White,
     surfaceVariant = Color(0xFFF1F5F9),
@@ -41,11 +41,11 @@ private val LightColorScheme = lightColorScheme(
     onTertiary = Color.White,
     onBackground = Color(0xFF0F172A),
     onSurface = Color(0xFF0F172A),
-    primaryContainer = OrangeLight,
-    secondaryContainer = AmberLight,
-    tertiaryContainer = RedLight,
+    primaryContainer = PetraRoseLight,
+    secondaryContainer = PetraSandstoneLight,
+    tertiaryContainer = PetraTerracottaLight,
     outline = Color(0xFFE2E8F0),
-    surfaceTint = BurntOrange
+    surfaceTint = PetraRose
 )
 
 @Composable

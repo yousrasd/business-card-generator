@@ -79,7 +79,7 @@ fun OnboardingScreen(backStack: SnapshotStateList<Any>) {
             Spacer(modifier = Modifier.height(48.dp))
             
             Button(
-                onClick = { backStack.add(ScreensListing.CardProfile) },
+                onClick = { backStack.add(ScreensListing.CardProfile()) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp),

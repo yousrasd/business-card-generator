@@ -8,6 +8,7 @@ import com.yousrasdn.businesscardgenerator.R
 import com.yousrasdn.businesscardgenerator.debug.DevToolsRepository
 import com.yousrasdn.businesscardgenerator.debug.PrefillData
 import com.yousrasdn.businesscardgenerator.domain.usecase.CardProfileFieldValidationResult
+import com.yousrasdn.businesscardgenerator.domain.usecase.GetMyBusinessCardUseCase
 import com.yousrasdn.businesscardgenerator.domain.usecase.ProfilePictureProcessingUseCase
 import com.yousrasdn.businesscardgenerator.domain.usecase.SaveBusinessCardUseCase
 import com.yousrasdn.businesscardgenerator.domain.validator.StepValidatorFactory
@@ -24,19 +25,20 @@ import javax.inject.Inject
 const val TOTAL_CARD_CREATION_STEPS = 4
 
 @HiltViewModel
-class CreateBusinessCardViewModel @Inject constructor(
+class BusinessCardFormViewModel @Inject constructor(
     private val application: Application,
     private val validateFields: ValidateCardProfileFieldsUseCase,
     private val stepValidatorFactory: StepValidatorFactory,
     private val profilePictureProcessingUseCase: ProfilePictureProcessingUseCase,
     private val saveBusinessCardUseCase: SaveBusinessCardUseCase,
-    private val devToolsRepository: DevToolsRepository
+    private val devToolsRepository: DevToolsRepository,
+    private val getMyCardUseCase: GetMyBusinessCardUseCase
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(CreateBusinessCardState())
+    private val _uiState = MutableStateFlow(BusinessCardFormState())
     val uiState = _uiState.asStateFlow()
 
-    private val _sideEffect = MutableSharedFlow<CreateBusinessCardSideEffect>(
+    private val _sideEffect = MutableSharedFlow<BusinessCardFormSideEffect>(
         extraBufferCapacity = 1
     )
     val sideEffect = _sideEffect.asSharedFlow()
@@ -46,6 +48,31 @@ class CreateBusinessCardViewModel @Inject constructor(
             viewModelScope.launch {
                 devToolsRepository.prefillData.collect { prefillData ->
                     prefillData?.let { applyPrefillData(it) }
+                }
+            }
+        }
+    }
+    
+    fun loadCardForEdit() {
+        viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(
+                currentStep = ProfileCreationStep.BasicInfo
+                )
+            getMyCardUseCase().collect { card ->
+                card?.let {
+                    _uiState.value = _uiState.value.copy(
+                        cardId = it.id,
+                        isEditMode = true,
+                        firstName = it.firstName,
+                        lastName = it.lastName,
+                        jobTitle = it.jobTitle,
+                        company = it.company,
+                        email = it.email,
+                        phone = it.phone,
+                        website = it.website,
+                        profilePhotoUri = it.photoPath
+                    )
+                    validateCurrentStep()
                 }
             }
         }
@@ -63,19 +90,19 @@ class CreateBusinessCardViewModel @Inject constructor(
         )
     }
 
-    fun onEvent(event: CreateBusinessCardEvent) {
+    fun onEvent(event: BusinessCardFormEvent) {
         when(event) {
-            is CreateBusinessCardEvent.UpdateFirstName -> handleFirstNameUpdate(event.value)
-            is CreateBusinessCardEvent.UpdateLastName -> handleLastNameUpdate(event.value)
-            is CreateBusinessCardEvent.UpdateJobTitle -> handleJobTitleUpdate(event.value)
-            is CreateBusinessCardEvent.UpdateCompany -> handleCompanyUpdate(event.value)
-            is CreateBusinessCardEvent.UpdateEmail -> handleEmailUpdate(event.value)
-            is CreateBusinessCardEvent.UpdatePhone -> handlePhoneUpdate(event.value)
-            is CreateBusinessCardEvent.UpdateWebsite -> handleWebsiteUpdate(event.value)
-            is CreateBusinessCardEvent.NextStep -> handleNextStep()
-            is CreateBusinessCardEvent.PreviousStep -> handlePreviousStep()
-            is CreateBusinessCardEvent.UpdatePhoto -> handlePhotoUpdate(event.value)
-            is CreateBusinessCardEvent.DeletePhoto -> handlePhotoDelete(event.value)
+            is BusinessCardFormEvent.UpdateFirstName -> handleFirstNameUpdate(event.value)
+            is BusinessCardFormEvent.UpdateLastName -> handleLastNameUpdate(event.value)
+            is BusinessCardFormEvent.UpdateJobTitle -> handleJobTitleUpdate(event.value)
+            is BusinessCardFormEvent.UpdateCompany -> handleCompanyUpdate(event.value)
+            is BusinessCardFormEvent.UpdateEmail -> handleEmailUpdate(event.value)
+            is BusinessCardFormEvent.UpdatePhone -> handlePhoneUpdate(event.value)
+            is BusinessCardFormEvent.UpdateWebsite -> handleWebsiteUpdate(event.value)
+            is BusinessCardFormEvent.NextStep -> handleNextStep()
+            is BusinessCardFormEvent.PreviousStep -> handlePreviousStep()
+            is BusinessCardFormEvent.UpdatePhoto -> handlePhotoUpdate(event.value)
+            is BusinessCardFormEvent.DeletePhoto -> handlePhotoDelete(event.value)
         }
     }
 
@@ -170,7 +197,7 @@ class CreateBusinessCardViewModel @Inject constructor(
 
             if(!isSuccessful) {
                 _sideEffect.tryEmit(
-                    CreateBusinessCardSideEffect.ShowError(
+                    BusinessCardFormSideEffect.ShowError(
                         application.getString(R.string.error_delete_photo)
                     )
                 )
@@ -202,11 +229,15 @@ class CreateBusinessCardViewModel @Inject constructor(
                 
                 result.onSuccess { cardId ->
                     _sideEffect.tryEmit(
-                        CreateBusinessCardSideEffect.CardCreationSuccess
+                        if (_uiState.value.isEditMode) {
+                            BusinessCardFormSideEffect.CardUpdateSuccess
+                        } else {
+                            BusinessCardFormSideEffect.CardCreationSuccess
+                        }
                     )
                 }.onFailure { error ->
                     _sideEffect.tryEmit(
-                        CreateBusinessCardSideEffect.ShowError(
+                        BusinessCardFormSideEffect.ShowError(
                             application.getString(R.string.error_save_card)
                         )
                     )
@@ -226,7 +257,7 @@ class CreateBusinessCardViewModel @Inject constructor(
             _uiState.value = _uiState.value.copy(currentStep = previousStep)
             validateCurrentStep()
         } else {
-            _sideEffect.tryEmit(CreateBusinessCardSideEffect.NavigateBack)
+            _sideEffect.tryEmit(BusinessCardFormSideEffect.NavigateBack)
         }
     }
 

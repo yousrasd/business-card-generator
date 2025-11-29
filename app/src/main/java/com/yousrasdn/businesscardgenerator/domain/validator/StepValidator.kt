@@ -1,7 +1,7 @@
 package com.yousrasdn.businesscardgenerator.domain.validator
 
-import com.yousrasdn.businesscardgenerator.presentation.screens.create_card.CreateBusinessCardState
+import com.yousrasdn.businesscardgenerator.presentation.screens.create_card.BusinessCardFormState
 
 interface StepValidator {
-    fun validate(state: CreateBusinessCardState): Boolean
+    fun validate(state: BusinessCardFormState): Boolean
 }
