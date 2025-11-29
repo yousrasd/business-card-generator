@@ -2,7 +2,7 @@ package com.yousrasdn.businesscardgenerator.debug
 
 import android.content.Context
 import com.yousrasdn.businesscardgenerator.BuildConfig
-import com.yousrasdn.businesscardgenerator.data.local.BusinessCardDatabase
+import com.yousrasdn.businesscardgenerator.data.local.database.AppDatabase
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -13,7 +13,7 @@ import javax.inject.Singleton
 @Singleton
 class DevToolsManager @Inject constructor(
     @ApplicationContext private val context: Context,
-    private val database: BusinessCardDatabase
+    private val database: AppDatabase
 ) {
     
     private val scope = CoroutineScope(Dispatchers.IO)

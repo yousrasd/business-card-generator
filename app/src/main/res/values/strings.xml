@@ -233,4 +233,6 @@
     <!-- Content Descriptions -->
     <string name="cd_clear_text">Clear text</string>
     <string name="cd_completed_step">Completed step</string>
+    <string name="cd_email">Email</string>
+    <string name="cd_phone">Phone</string>
 </resources>

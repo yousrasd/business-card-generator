@@ -25,6 +25,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -76,14 +77,33 @@ fun ProfileViewScreen(
                     }
                 },
                 actions = {
-                    IconButton(onClick = { /* TODO: Show menu */ }) {
+                    IconButton(onClick = { viewModel.onEvent(ProfileViewEvent.ShareCard) }) {
                         Icon(
-                            Icons.Default.MoreVert,
-                            contentDescription = stringResource(R.string.cd_menu)
+                            Icons.Default.Share,
+                            contentDescription = stringResource(R.string.profile_share)
+                        )
+                    }
+                    IconButton(onClick = { viewModel.onEvent(ProfileViewEvent.ShowQRCode) }) {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_qr_code),
+                            contentDescription = stringResource(R.string.profile_qr_code)
                         )
                     }
                 }
             )
+        },
+        floatingActionButton = {
+            if (uiState.card != null) {
+                FloatingActionButton(
+                    onClick = { viewModel.onEvent(ProfileViewEvent.EditCard) },
+                    containerColor = MaterialTheme.colorScheme.primary
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Edit,
+                        contentDescription = stringResource(R.string.profile_edit)
+                    )
+                }
+            }
         }
     ) { paddingValues ->
         Box(
@@ -114,13 +134,11 @@ private fun ProfileContent(
     card: BusinessCard,
     onEvent: (ProfileViewEvent) -> Unit
 ) {
-    Column(
+    Box(
         modifier = Modifier
             .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-            .padding(horizontal = Spacing.medium)
-            .padding(vertical = Spacing.large),
-        verticalArrangement = Arrangement.spacedBy(Spacing.medium)
+            .padding(horizontal = Spacing.medium),
+        contentAlignment = Alignment.Center
     ) {
         Card(
             modifier = Modifier.fillMaxWidth(),
@@ -231,44 +249,6 @@ private fun ProfileContent(
                     )
                 }
             }
-        }
-        
-        Spacer(modifier = Modifier.height(8.dp))
-        
-        OutlinedButton(
-            onClick = { onEvent(ProfileViewEvent.ShareCard) },
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(56.dp)
-        ) {
-            Icon(
-                imageVector = Icons.Default.Share,
-                contentDescription = null,
-                modifier = Modifier.size(24.dp)
-            )
-            Spacer(modifier = Modifier.size(12.dp))
-            Text(
-                text = stringResource(R.string.profile_share),
-                style = MaterialTheme.typography.labelLarge
-            )
-        }
-        
-        OutlinedButton(
-            onClick = { onEvent(ProfileViewEvent.ShowQRCode) },
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(56.dp)
-        ) {
-            Icon(
-                painter = painterResource(R.drawable.ic_qr_code),
-                contentDescription = null,
-                modifier = Modifier.size(24.dp)
-            )
-            Spacer(modifier = Modifier.size(12.dp))
-            Text(
-                text = stringResource(R.string.profile_qr_code),
-                style = MaterialTheme.typography.labelLarge
-            )
         }
     }
 }

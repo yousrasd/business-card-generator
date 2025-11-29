@@ -2,6 +2,7 @@ package com.yousrasdn.businesscardgenerator.presentation.screens.home
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
@@ -9,11 +10,14 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Menu
@@ -39,6 +43,8 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -79,14 +85,7 @@ fun HomeScreen(
                         }else {
                             Modifier
                         }
-
-
                     )
-                },
-                navigationIcon = {
-                    IconButton(onClick = { /* TODO: Open drawer */ }) {
-                        Icon(Icons.Default.Menu, contentDescription = stringResource(R.string.cd_menu))
-                    }
                 },
                 actions = {
                     IconButton(onClick = { /* TODO: Open settings */ }) {
@@ -137,38 +136,35 @@ private fun CardContent(
     Column(
         verticalArrangement = Arrangement.spacedBy(Spacing.large)
     ) {
-        Text(
-            text = stringResource(R.string.home_my_digital_card),
-            style = MaterialTheme.typography.headlineMedium,
-            fontWeight = FontWeight.Bold,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.fillMaxWidth().padding(top = Spacing.medium)
-        )
-        
         Card(
             modifier = Modifier
                 .fillMaxWidth()
                 .clickable { 
-                    backStack.add("ProfileView")
+                    backStack.add(ScreensListing.Profile)
                 },
-            elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surface
-            )
+            shape = RoundedCornerShape(24.dp),
+            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
         ) {
-            Column(
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(Spacing.large),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(Spacing.medium)
+                    .aspectRatio(1.6f)
+                    .background(
+                        brush = Brush.linearGradient(
+                            colors = listOf(
+                                Color(0xFF667EEA),
+                                Color(0xFF764BA2)
+                            )
+                        )
+                    )
+                    .padding(20.dp)
             ) {
-                Box(
+                Column(
                     modifier = Modifier
-                        .size(80.dp)
-                        .clip(CircleShape)
-                        .background(MaterialTheme.colorScheme.surfaceVariant),
-                    contentAlignment = Alignment.Center
+                        .fillMaxWidth()
+                        .align(Alignment.Center),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     if (card.photoPath != null) {
                         AsyncImage(
@@ -176,43 +172,59 @@ private fun CardContent(
                             contentDescription = stringResource(R.string.cd_profile_photo),
                             modifier = Modifier
                                 .size(80.dp)
-                                .clip(CircleShape),
+                                .clip(CircleShape)
+                                .border(3.dp, Color.White, CircleShape),
                             contentScale = ContentScale.Crop
                         )
                     } else {
-                        Icon(
-                            imageVector = Icons.Default.Person,
-                            contentDescription = stringResource(R.string.photo_no_photo),
-                            modifier = Modifier.size(40.dp),
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
+                        Box(
+                            modifier = Modifier
+                                .size(80.dp)
+                                .clip(CircleShape)
+                                .border(3.dp, Color.White, CircleShape)
+                                .background(Color.White.copy(alpha = 0.2f)),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Person,
+                                contentDescription = stringResource(R.string.photo_no_photo),
+                                modifier = Modifier.size(40.dp),
+                                tint = Color.White
+                            )
+                        }
                     }
+                    
+                    Text(
+                        text = "${card.firstName} ${card.lastName}",
+                        style = MaterialTheme.typography.headlineSmall,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White,
+                        textAlign = TextAlign.Center,
+                        maxLines = 1
+                    )
+                    
+                    Text(
+                        text = card.jobTitle,
+                        style = MaterialTheme.typography.titleMedium,
+                        color = Color.White.copy(alpha = 0.95f),
+                        textAlign = TextAlign.Center,
+                        maxLines = 2
+                    )
+                    
+                    Text(
+                        text = card.company,
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = Color.White.copy(alpha = 0.9f),
+                        textAlign = TextAlign.Center,
+                        maxLines = 1
+                    )
                 }
-                
-                Text(
-                    text = "${card.firstName} ${card.lastName}",
-                    style = MaterialTheme.typography.headlineSmall,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-                
-                Text(
-                    text = card.jobTitle,
-                    style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-                
-                Text(
-                    text = card.company,
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.primary
-                )
             }
         }
         
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             QuickActionCard(
                 icon = Icons.Default.Share,
@@ -225,13 +237,6 @@ private fun CardContent(
                 iconRes = R.drawable.ic_qr_code,
                 label = stringResource(R.string.home_qr_code),
                 onClick = { onEvent(HomeScreenEvent.ShowQRCode) },
-                modifier = Modifier.weight(1f)
-            )
-            
-            QuickActionCard(
-                icon = Icons.Default.Edit,
-                label = stringResource(R.string.home_edit),
-                onClick = { onEvent(HomeScreenEvent.EditCard) },
                 modifier = Modifier.weight(1f)
             )
         }
