@@ -25,7 +25,7 @@ class HomeViewModel @Inject constructor(
     fun onEvent(event: HomeScreenEvent) {
         when (event) {
             HomeScreenEvent.ShareCard -> {
-                // TODO: Share card
+                _uiState.value = _uiState.value.copy(shareVisible = true)
             }
             is HomeScreenEvent.ShowQRCode -> {
                 _uiState.value = _uiState.value.copy(
@@ -34,6 +34,9 @@ class HomeViewModel @Inject constructor(
             }
             HomeScreenEvent.RefreshCard -> {
                 loadCard()
+            }
+            HomeScreenEvent.DismissShare -> {
+                _uiState.value = _uiState.value.copy(shareVisible = false)
             }
         }
     }

@@ -47,6 +47,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -58,6 +59,7 @@ import coil.compose.AsyncImage
 import com.yousrasdn.businesscardgenerator.BuildConfig
 import com.yousrasdn.businesscardgenerator.R
 import com.yousrasdn.businesscardgenerator.core.navigation.ScreensListing
+import com.yousrasdn.businesscardgenerator.core.util.ShareHelper
 import com.yousrasdn.businesscardgenerator.domain.model.BusinessCard
 import com.yousrasdn.businesscardgenerator.ui.theme.Spacing
 
@@ -117,7 +119,8 @@ fun HomeScreen(
                         card = uiState.card!!,
                         onEvent = viewModel::onEvent,
                         backStack = backStack,
-                        renderQrCode = uiState.qrCodeVisible
+                        renderQrCode = uiState.qrCodeVisible,
+                        shareVisible = uiState.shareVisible
                     )
                 }
                 else -> {
@@ -132,6 +135,7 @@ fun HomeScreen(
 private fun CardContent(
     card: BusinessCard,
     renderQrCode: Boolean,
+    shareVisible: Boolean,
     onEvent: (HomeScreenEvent) -> Unit,
     backStack: SnapshotStateList<Any>
 ) {
@@ -265,6 +269,29 @@ private fun CardContent(
             QRCodeBottomSheet(
                 card = card,
                 onDismiss = { onEvent(HomeScreenEvent.ShowQRCode(isVisible = false)) },
+            )
+        }
+        
+        if (shareVisible) {
+            val context = LocalContext.current
+            ShareBottomSheet(
+                onDismiss = { onEvent(HomeScreenEvent.DismissShare) },
+                onShareViaApps = { 
+                    ShareHelper.shareViaApps(context, card)
+                    onEvent(HomeScreenEvent.DismissShare)
+                },
+                onShareViaEmail = { 
+                    ShareHelper.shareViaEmail(context, card)
+                    onEvent(HomeScreenEvent.DismissShare)
+                },
+                onShareViaSMS = { 
+                    ShareHelper.shareViaSMS(context, card)
+                    onEvent(HomeScreenEvent.DismissShare)
+                },
+                onCopyToClipboard = { 
+                    ShareHelper.copyToClipboard(context, card)
+                    onEvent(HomeScreenEvent.DismissShare)
+                }
             )
         }
     }

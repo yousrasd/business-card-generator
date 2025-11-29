@@ -118,6 +118,19 @@
     <string name="qr_code_share">Share via Apps</string>
     <string name="qr_code_saved">QR Code saved to gallery</string>
     
+    <!-- Share -->
+    <string name="share_title">Share Your Card</string>
+    <string name="share_subtitle">Choose how you want to share your contact</string>
+    <string name="share_via_apps">Share via Apps</string>
+    <string name="share_via_apps_desc">WhatsApp, Telegram, etc.</string>
+    <string name="share_via_email">Share via Email</string>
+    <string name="share_via_email_desc">Send as email attachment</string>
+    <string name="share_via_sms">Share via SMS</string>
+    <string name="share_via_sms_desc">Send as text message</string>
+    <string name="share_copy_link">Copy Contact Info</string>
+    <string name="share_copy_link_desc">Copy to clipboard</string>
+    <string name="share_copied">Contact info copied to clipboard</string>
+    
     <!-- Scanner -->
     <string name="scanner_title">Scan Business Card</string>
     <string name="scanner_instruction">Point camera at QR code</string>

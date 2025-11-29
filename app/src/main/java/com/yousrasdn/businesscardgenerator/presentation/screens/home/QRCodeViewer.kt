@@ -103,7 +103,7 @@ fun QRCodeBottomSheet(
                 generateQRCode(card)
             }
             
-            if (qrBitmap) {
+            if (qrBitmap!=null) {
                 Image(
                     bitmap = qrBitmap.asImageBitmap(),
                     contentDescription = stringResource(R.string.cd_qr_code),

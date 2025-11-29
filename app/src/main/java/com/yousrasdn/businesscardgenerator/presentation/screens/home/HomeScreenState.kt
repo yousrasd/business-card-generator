@@ -7,5 +7,5 @@ data class HomeScreenState(
     val isLoading: Boolean = false,
     val error: String? = null,
     val qrCodeVisible: Boolean = false,
-
+    val shareVisible: Boolean = false
 )
