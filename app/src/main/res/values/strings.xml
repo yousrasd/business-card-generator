@@ -112,7 +112,8 @@
     <string name="open_settings">Open Settings</string>
 
     <!-- QR Code -->
-    <string name="qr_code_title">Share Your Card</string>
+    <string name="qr_code_title">My QR Code</string>
+    <string name="qr_code_error">Something went wrong when generating the QR code</string>
     <string name="qr_code_save">Save QR Code</string>
     <string name="qr_code_share">Share via Apps</string>
     <string name="qr_code_saved">QR Code saved to gallery</string>
@@ -235,4 +236,8 @@
     <string name="cd_completed_step">Completed step</string>
     <string name="cd_email">Email</string>
     <string name="cd_phone">Phone</string>
+    <string name="cd_download">Download</string>
+    
+    <!-- QR Code -->
+    <string name="qr_code_scan_instruction">Ask others to scan this code to save your contact</string>
 </resources>

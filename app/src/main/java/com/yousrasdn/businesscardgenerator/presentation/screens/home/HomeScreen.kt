@@ -116,7 +116,8 @@ fun HomeScreen(
                     CardContent(
                         card = uiState.card!!,
                         onEvent = viewModel::onEvent,
-                        backStack = backStack
+                        backStack = backStack,
+                        renderQrCode = uiState.qrCodeVisible
                     )
                 }
                 else -> {
@@ -130,6 +131,7 @@ fun HomeScreen(
 @Composable
 private fun CardContent(
     card: BusinessCard,
+    renderQrCode: Boolean,
     onEvent: (HomeScreenEvent) -> Unit,
     backStack: SnapshotStateList<Any>
 ) {
@@ -236,7 +238,7 @@ private fun CardContent(
             QuickActionCardDrawable(
                 iconRes = R.drawable.ic_qr_code,
                 label = stringResource(R.string.home_qr_code),
-                onClick = { onEvent(HomeScreenEvent.ShowQRCode) },
+                onClick = { onEvent(HomeScreenEvent.ShowQRCode(isVisible = true)) },
                 modifier = Modifier.weight(1f)
             )
         }
@@ -258,6 +260,13 @@ private fun CardContent(
             textAlign = TextAlign.Center,
             modifier = Modifier.fillMaxWidth()
         )
+
+        if (renderQrCode) {
+            QRCodeBottomSheet(
+                card = card,
+                onDismiss = { onEvent(HomeScreenEvent.ShowQRCode(isVisible = false)) },
+            )
+        }
     }
 }
 

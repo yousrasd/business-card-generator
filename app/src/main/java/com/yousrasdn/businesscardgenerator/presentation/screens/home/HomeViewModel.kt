@@ -24,14 +24,13 @@ class HomeViewModel @Inject constructor(
     
     fun onEvent(event: HomeScreenEvent) {
         when (event) {
-            HomeScreenEvent.ViewFullCard -> {
-                // Navigation handled in UI layer
-            }
             HomeScreenEvent.ShareCard -> {
                 // TODO: Share card
             }
-            HomeScreenEvent.ShowQRCode -> {
-                // TODO: Show QR code
+            is HomeScreenEvent.ShowQRCode -> {
+                _uiState.value = _uiState.value.copy(
+                    qrCodeVisible = event.isVisible
+                )
             }
             HomeScreenEvent.RefreshCard -> {
                 loadCard()

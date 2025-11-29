@@ -56,6 +56,11 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.compose.foundation.layout)
     testImplementation(libs.junit)
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.0")
+    testImplementation("app.cash.turbine:turbine:1.0.0")
+    testImplementation("io.mockk:mockk:1.13.9")
+    testImplementation("com.google.truth:truth:1.1.5")
+    
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
@@ -81,5 +86,7 @@ dependencies {
     ksp(libs.room.compiler)
     
     implementation(libs.androidx.core.splashscreen)
+    
+    implementation("com.google.zxing:core:3.5.3")
 
 }

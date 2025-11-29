@@ -1,8 +1,7 @@
 package com.yousrasdn.businesscardgenerator.presentation.screens.home
 
 sealed interface HomeScreenEvent {
-    object ViewFullCard : HomeScreenEvent
     object ShareCard : HomeScreenEvent
-    object ShowQRCode : HomeScreenEvent
+    data class ShowQRCode(val isVisible: Boolean = false) : HomeScreenEvent
     object RefreshCard : HomeScreenEvent
 }
