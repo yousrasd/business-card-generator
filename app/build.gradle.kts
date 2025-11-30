@@ -88,5 +88,6 @@ dependencies {
     implementation(libs.androidx.core.splashscreen)
     
     implementation("com.google.zxing:core:3.5.3")
+    implementation("androidx.exifinterface:exifinterface:1.3.7")
 
 }

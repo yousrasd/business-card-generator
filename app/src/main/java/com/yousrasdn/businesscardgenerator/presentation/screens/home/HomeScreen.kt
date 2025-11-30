@@ -154,7 +154,6 @@ private fun CardContent(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .aspectRatio(1.6f)
                     .background(
                         brush = Brush.linearGradient(
                             colors = listOf(
@@ -163,12 +162,11 @@ private fun CardContent(
                             )
                         )
                     )
-                    .padding(20.dp)
             ) {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .align(Alignment.Center),
+                        .padding(24.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
