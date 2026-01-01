@@ -65,6 +65,46 @@ class DevToolsManager @Inject constructor(
             bio = "Creative product designer focused on user-centered design and delightful experiences."
         )
     }
+
+
+    fun getPrefillData3(): PrefillData {
+        return PrefillData(
+            firstName = "Michael",
+            lastName = "Chen",
+            jobTitle = "CTO",
+            company = "Startup Inc",
+            email = "michael.chen@startup.io",
+            phone = "+143812345678",
+            website = "www.startup.io",
+            bio = "Tech visionary leading the next generation of software solutions."
+        )
+    }
+
+    fun getPrefillData4(): PrefillData {
+        return PrefillData(
+            firstName = "Sarah",
+            lastName = "Jones",
+            jobTitle = "Marketing Director",
+            company = "Global Reach",
+            email = "sarah.jones@globalreach.com",
+            phone = "+143812345678",
+            website = "www.globalreach.com",
+            bio = "Strategic marketing leader connecting brands with their audience."
+        )
+    }
+
+    fun getPrefillData5(): PrefillData {
+        return PrefillData(
+            firstName = "David",
+            lastName = "Wilson",
+            jobTitle = "Data Scientist",
+            company = "AI Solutions",
+            email = "david.wilson@aisolutions.ai",
+            phone = "+15554567890",
+            website = "www.aisolutions.ai",
+            bio = "Extracting insights from data to drive business decisions."
+        )
+    }
 }
 
 data class PrefillData(

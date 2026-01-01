@@ -7,15 +7,18 @@ import com.yousrasdn.businesscardgenerator.domain.usecase.SaveBusinessCardUseCas
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import com.yousrasdn.businesscardgenerator.data.repository.BusinessCardRepository
 
 @HiltViewModel
 class QRScannerViewModel @Inject constructor(
-    private val saveBusinessCardUseCase: SaveBusinessCardUseCase
+    private val saveBusinessCardUseCase: SaveBusinessCardUseCase,
+    private val repository: BusinessCardRepository
 ) : ViewModel() {
     
     fun handleScannedQRCode(
         qrData: String,
-        onSuccess: () -> Unit,
+        onSuccess: (Long) -> Unit,
+        onDuplicate: (Long) -> Unit,
         onError: (String) -> Unit
     ) {
         viewModelScope.launch {
@@ -26,11 +29,17 @@ class QRScannerViewModel @Inject constructor(
                 return@launch
             }
             
+            val existingCard = repository.findCardByEmail(businessCard.email)
+            if (existingCard != null) {
+                onDuplicate(existingCard.id)
+                return@launch
+            }
+            
             val result = saveBusinessCardUseCase(businessCard)
             
             result.fold(
-                onSuccess = {
-                    onSuccess()
+                onSuccess = { id ->
+                    onSuccess(id)
                 },
                 onFailure = { error ->
                     onError(error.message ?: "Failed to save card")

@@ -1,6 +1,7 @@
 package com.yousrasdn.businesscardgenerator.presentation
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -13,7 +14,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
+
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.entryProvider
@@ -85,17 +88,20 @@ fun AppNavigation(startDestination: Any) {
                 }
                 entry<ScreensListing.ScanCard> {
                     val viewModel: QRScannerViewModel = hiltViewModel()
+                    val context = LocalContext.current
                     
                     QRScannerScreen(
                         onQRCodeScanned = { qrData ->
                             viewModel.handleScannedQRCode(
                                 qrData = qrData,
-                                onSuccess = {
+                                onSuccess = { cardId ->
                                     backStack.removeLastOrNull()
-                                    if (backStack.lastOrNull() !is ScreensListing.Home) {
-                                        backStack.clear()
-                                        backStack.add(ScreensListing.Home)
-                                    }
+                                    backStack.add(ScreensListing.ScannedCardDetails(cardId))
+                                },
+                                onDuplicate = { cardId ->
+                                    backStack.removeLastOrNull()
+                                    Toast.makeText(context, "Card already saved", android.widget.Toast.LENGTH_SHORT).show()
+                                    backStack.add(ScreensListing.ScannedCardDetails(cardId))
                                 },
                                 onError = { errorMessage ->
                                     android.util.Log.e("QRScanner", "Error: $errorMessage")

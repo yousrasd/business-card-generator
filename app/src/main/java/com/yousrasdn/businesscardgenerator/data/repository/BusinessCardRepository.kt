@@ -15,6 +15,7 @@ interface BusinessCardRepository {
     suspend fun deleteCard(card: BusinessCard)
     fun getMyCard(): Flow<BusinessCard?>
     suspend fun getCardById(id: Long): BusinessCard?
+    suspend fun findCardByEmail(email: String): BusinessCard?
     fun getAllCards(): Flow<List<BusinessCard>>
     fun getScannedCards(): Flow<List<BusinessCard>>
 
@@ -48,6 +49,10 @@ class BusinessCardRepositoryImpl @Inject constructor(
     
     override suspend fun getCardById(id: Long): BusinessCard? {
         return dao.getCardById(id)?.toDomain()
+    }
+
+    override suspend fun findCardByEmail(email: String): BusinessCard? {
+        return dao.findCardByEmail(email)?.toDomain()
     }
     
     override fun getAllCards(): Flow<List<BusinessCard>> {

@@ -94,6 +94,27 @@ fun DevToolsScreen(
                 icon = Icons.Default.Edit,
                 onClick = { viewModel.setPrefillData(2) }
             )
+
+            DevToolButton(
+                text = "Prefill Form (Michael Chen)",
+                description = "CTO Persona",
+                icon = Icons.Default.Edit,
+                onClick = { viewModel.setPrefillData(3) }
+            )
+
+            DevToolButton(
+                text = "Prefill Form (Sarah Jones)",
+                description = "Marketing Persona",
+                icon = Icons.Default.Edit,
+                onClick = { viewModel.setPrefillData(4) }
+            )
+
+            DevToolButton(
+                text = "Prefill Form (David Wilson)",
+                description = "Data Scientist Persona",
+                icon = Icons.Default.Edit,
+                onClick = { viewModel.setPrefillData(5) }
+            )
             
             DevToolButton(
                 text = "Clear Prefill",

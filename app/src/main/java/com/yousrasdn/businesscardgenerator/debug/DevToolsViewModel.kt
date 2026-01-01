@@ -24,6 +24,9 @@ class DevToolsViewModel @Inject constructor(
         val data = when (variant) {
             1 -> devToolsManager.getPrefillData()
             2 -> devToolsManager.getPrefillData2()
+            3 -> devToolsManager.getPrefillData3()
+            4 -> devToolsManager.getPrefillData4()
+            5 -> devToolsManager.getPrefillData5()
             else -> null
         }
         devToolsRepository.setPrefillData(data)

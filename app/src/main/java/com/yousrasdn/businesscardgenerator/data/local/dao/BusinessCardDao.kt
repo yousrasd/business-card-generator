@@ -33,6 +33,9 @@ interface BusinessCardDao {
     @Query("SELECT * FROM business_cards WHERE isMyCard = 0 ORDER BY createdAt DESC")
     fun getScannedCards(): Flow<List<BusinessCardEntity>>
     
+    @Query("SELECT * FROM business_cards WHERE email = :email AND isMyCard = 0 LIMIT 1")
+    suspend fun findCardByEmail(email: String): BusinessCardEntity?
+    
     @Query("DELETE FROM business_cards WHERE id = :id")
     suspend fun deleteById(id: Long)
 
