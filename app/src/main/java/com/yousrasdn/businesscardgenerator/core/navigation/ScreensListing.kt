@@ -6,5 +6,6 @@ sealed interface ScreensListing {
     data object ScanCard : ScreensListing
     data object Home : ScreensListing
     data object Profile : ScreensListing
+    data class ScannedCardDetails(val cardId: Long) : ScreensListing
     data object DevTool : ScreensListing
 }

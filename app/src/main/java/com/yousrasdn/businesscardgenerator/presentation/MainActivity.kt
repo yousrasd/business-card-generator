@@ -8,11 +8,13 @@ import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
@@ -24,7 +26,9 @@ import com.yousrasdn.businesscardgenerator.presentation.screens.create_card.Busi
 import com.yousrasdn.businesscardgenerator.presentation.screens.home.HomeScreen
 import com.yousrasdn.businesscardgenerator.presentation.screens.onboarding.OnboardingScreen
 import com.yousrasdn.businesscardgenerator.presentation.screens.profile.ProfileViewScreen
-import com.yousrasdn.businesscardgenerator.presentation.screens.scan_card.ScanCardScreen
+import com.yousrasdn.businesscardgenerator.presentation.screens.scanned_card_details.ScannedCardDetailsScreen
+import com.yousrasdn.businesscardgenerator.presentation.screens.scan_card.QRScannerScreen
+import com.yousrasdn.businesscardgenerator.presentation.screens.scan_card.QRScannerViewModel
 import com.yousrasdn.businesscardgenerator.ui.theme.BusinessCardGeneratorTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -61,6 +65,8 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+
+
 @Composable
 fun AppNavigation(startDestination: Any) {
     Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
@@ -69,7 +75,7 @@ fun AppNavigation(startDestination: Any) {
         NavDisplay(
             backStack = backStack,
             modifier = Modifier.padding(innerPadding),
-            onBack = { },
+            onBack = { backStack.removeLastOrNull() },
             entryProvider = entryProvider {
                 entry<ScreensListing.Onboarding> {
                     OnboardingScreen(backStack)
@@ -78,13 +84,41 @@ fun AppNavigation(startDestination: Any) {
                     BusinessCardFormScreen(backStack, isEditMode = screen.isEditMode)
                 }
                 entry<ScreensListing.ScanCard> {
-                    ScanCardScreen(backStack)
+                    val viewModel: QRScannerViewModel = hiltViewModel()
+                    
+                    QRScannerScreen(
+                        onQRCodeScanned = { qrData ->
+                            viewModel.handleScannedQRCode(
+                                qrData = qrData,
+                                onSuccess = {
+                                    backStack.removeLastOrNull()
+                                    if (backStack.lastOrNull() !is ScreensListing.Home) {
+                                        backStack.clear()
+                                        backStack.add(ScreensListing.Home)
+                                    }
+                                },
+                                onError = { errorMessage ->
+                                    android.util.Log.e("QRScanner", "Error: $errorMessage")
+                                    backStack.removeLastOrNull()
+                                }
+                            )
+                        },
+                        onClose = { 
+                            backStack.removeLastOrNull() 
+                        }
+                    )
                 }
                 entry<ScreensListing.Home> {
                     HomeScreen(backStack)
                 }
                 entry<ScreensListing.Profile> {
                     ProfileViewScreen(backStack)
+                }
+                entry<ScreensListing.ScannedCardDetails> { screen ->
+                    ScannedCardDetailsScreen(
+                         cardId = screen.cardId,
+                         backStack = backStack
+                    )
                 }
                 entry<ScreensListing.DevTool> {
                     DevToolsScreen(backStack)

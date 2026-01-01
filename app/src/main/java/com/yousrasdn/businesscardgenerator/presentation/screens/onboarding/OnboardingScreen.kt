@@ -33,7 +33,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.yousrasdn.businesscardgenerator.R
 import com.yousrasdn.businesscardgenerator.core.navigation.ScreensListing
-import com.yousrasdn.businesscardgenerator.presentation.screens.scan_card.ScanCardScreen
 
 @Composable
 fun OnboardingScreen(backStack: SnapshotStateList<Any>) {

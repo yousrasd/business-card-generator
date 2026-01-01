@@ -42,6 +42,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.FileProvider
 import coil.compose.AsyncImage
 import com.yousrasdn.businesscardgenerator.R
+import com.yousrasdn.businesscardgenerator.core.ui.components.CameraPermissionDialog
 import com.yousrasdn.businesscardgenerator.presentation.screens.create_card.BusinessCardFormEvent
 import com.yousrasdn.businesscardgenerator.presentation.screens.create_card.BusinessCardFormState
 import com.yousrasdn.businesscardgenerator.ui.theme.Spacing
@@ -89,7 +90,6 @@ fun CreateProfilePhotoScreen(
         if (isGranted) {
             cameraLauncher.launch(photoUri)
         } else {
-            // Permission denied
             showCameraRationale =  ActivityCompat.shouldShowRequestPermissionRationale(
                 context as Activity,
                 Manifest.permission.CAMERA
@@ -184,55 +184,11 @@ fun CreateProfilePhotoScreen(
         }
 
         if (showCameraRequestDialog) {
-            AlertDialog(
-                onDismissRequest = { showCameraRequestDialog = false },
-                icon = {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_camera),
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.primary
-                    )
-                },
-                title = {
-                    Text(stringResource(R.string.camera_permission_title))
-                },
-                text = {
-                    Text(
-                        if (showCameraRationale) {
-                            stringResource(R.string.camera_permission_rationale)
-                        } else {
-                            stringResource(R.string.camera_permission_settings_message)
-                        }
-                    )
-                },
-                confirmButton = {
-                    TextButton(
-                        onClick = {
-                            showCameraRequestDialog = false
-                            if (showCameraRationale) {
-                                cameraPermissionLauncher.launch(Manifest.permission.CAMERA)
-                            } else {
-                                val intent = Intent(
-                                    Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-                                    Uri.fromParts("package", context.packageName, null)
-                                )
-                                context.startActivity(intent)
-                            }
-                        }
-                    ) {
-                        Text(
-                            if (showCameraRationale) {
-                                stringResource(R.string.grant_permission)
-                            } else {
-                                stringResource(R.string.open_settings)
-                            }
-                        )
-                    }
-                },
-                dismissButton = {
-                    TextButton(onClick = { showCameraRequestDialog = false }) {
-                        Text(stringResource(R.string.btn_cancel))
-                    }
+            CameraPermissionDialog(
+                shouldShowRationale = showCameraRationale,
+                onDismiss = { showCameraRequestDialog = false },
+                onRequestPermission = {
+                    cameraPermissionLauncher.launch(Manifest.permission.CAMERA)
                 }
             )
         }

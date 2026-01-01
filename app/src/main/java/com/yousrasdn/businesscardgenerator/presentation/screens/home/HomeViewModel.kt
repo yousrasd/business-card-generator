@@ -3,6 +3,7 @@ package com.yousrasdn.businesscardgenerator.presentation.screens.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.yousrasdn.businesscardgenerator.domain.usecase.GetMyBusinessCardUseCase
+import com.yousrasdn.businesscardgenerator.domain.usecase.GetScannedCardsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -12,7 +13,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val getMyCardUseCase: GetMyBusinessCardUseCase
+    private val getMyCardUseCase: GetMyBusinessCardUseCase,
+    private val getScannedCardsUseCase: GetScannedCardsUseCase
 ) : ViewModel() {
     
     private val _uiState = MutableStateFlow(HomeScreenState())
@@ -20,6 +22,7 @@ class HomeViewModel @Inject constructor(
     
     init {
         loadCard()
+        loadScannedCards()
     }
     
     fun onEvent(event: HomeScreenEvent) {
@@ -57,6 +60,19 @@ class HomeViewModel @Inject constructor(
                         card = card,
                         isLoading = false,
                         error = null
+                    )
+                }
+        }
+    }
+    
+    private fun loadScannedCards() {
+        viewModelScope.launch {
+            getScannedCardsUseCase()
+                .catch { error ->
+                }
+                .collect { cards ->
+                    _uiState.value = _uiState.value.copy(
+                        scannedCards = cards
                     )
                 }
         }

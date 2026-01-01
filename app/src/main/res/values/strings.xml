@@ -110,6 +110,14 @@
     <string name="camera_permission_settings_message">Camera permission is required to take photos. Please enable it in app settings.</string>
     <string name="grant_permission">Grant Permission</string>
     <string name="open_settings">Open Settings</string>
+    <string name="permission_camera_title">Camera Access Needed</string>
+    <string name="permission_camera_rationale">We need camera access to scan QR codes and take photos for your business card.</string>
+    <string name="permission_camera_denied_title">Camera Permission Denied</string>
+    <string name="permission_camera_denied_message">Camera permission is required. Please enable it in app settings to continue.</string>
+    <string name="permission_grant">Allow</string>
+    <string name="permission_deny">Not Now</string>
+    <string name="permission_open_settings">Open Settings</string>
+
 
     <!-- QR Code -->
     <string name="qr_code_title">My QR Code</string>
@@ -136,6 +144,7 @@
     <string name="scanner_instruction">Point camera at QR code</string>
     <string name="scanner_success">Card scanned successfully</string>
     <string name="scanner_error">Failed to scan QR code</string>
+    <string name="camera_permission_required_qr">Camera permission is required to scan QR codes</string>
     
     <!-- Scanned Profile -->
     <string name="scanned_profile_title">Scanned Card</string>
@@ -235,12 +244,16 @@
     <string name="home_title">My Card</string>
     <string name="home_my_digital_card">My Digital Card</string>
     <string name="home_share">Share</string>
+    <string name="home_scan">Scan</string>
     <string name="home_qr_code">QR Code</string>
     <string name="home_edit">Edit</string>
+    <string name="home_create_card_promo">Create Your Personal Card</string>
+    <string name="home_create_card_subtitle">Create your digital business card to share with others instantly.</string>
     <string name="home_recent_activity">Recent Activity</string>
     <string name="home_no_recent_activity">No scanned cards yet</string>
     <string name="home_loading_card">Loading your card…</string>
     <string name="home_no_card">No card found</string>
+    <string name="home_no_card_subtitle">Tap the + button to create your first card or scan a QR code to save a contact.</string>
     <string name="home_error_load_card">Failed to load card</string>
     <string name="btn_retry">Retry</string>
     
@@ -250,6 +263,8 @@
     <string name="cd_email">Email</string>
     <string name="cd_phone">Phone</string>
     <string name="cd_download">Download</string>
+    <string name="cd_toggle_flash">Toggle flash</string>
+
     
     <!-- QR Code -->
     <string name="qr_code_scan_instruction">Ask others to scan this code to save your contact</string>
