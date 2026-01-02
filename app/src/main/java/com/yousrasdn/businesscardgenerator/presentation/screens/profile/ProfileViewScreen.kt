@@ -16,11 +16,13 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material.icons.filled.Share
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -33,9 +35,13 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -62,6 +68,7 @@ fun ProfileViewScreen(
     viewModel: ProfileViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    var showDeleteDialog by remember { mutableStateOf(false) }
     
     Scaffold(
         topBar = {
@@ -70,7 +77,6 @@ fun ProfileViewScreen(
                 navigationIcon = {
                     IconButton(onClick = { 
                         backStack.removeLastOrNull()
-                        viewModel.onEvent(ProfileViewEvent.Back)
                     }) {
                         Icon(
                             Icons.AutoMirrored.Filled.ArrowBack,
@@ -79,17 +85,14 @@ fun ProfileViewScreen(
                     }
                 },
                 actions = {
-                    IconButton(onClick = { viewModel.onEvent(ProfileViewEvent.ShareCard) }) {
-                        Icon(
-                            Icons.Default.Share,
-                            contentDescription = stringResource(R.string.profile_share)
-                        )
-                    }
-                    IconButton(onClick = { viewModel.onEvent(ProfileViewEvent.ShowQRCode) }) {
-                        Icon(
-                            painter = painterResource(R.drawable.ic_qr_code),
-                            contentDescription = stringResource(R.string.profile_qr_code)
-                        )
+                    if (uiState.card != null) {
+                        IconButton(onClick = { showDeleteDialog = true }) {
+                            Icon(
+                                Icons.Default.Delete,
+                                contentDescription = stringResource(R.string.dialog_delete_confirm),
+                                tint = MaterialTheme.colorScheme.error
+                            )
+                        }
                     }
                 }
             )
@@ -130,6 +133,29 @@ fun ProfileViewScreen(
                 }
             }
         }
+    }
+
+    if (showDeleteDialog) {
+        AlertDialog(
+            onDismissRequest = { showDeleteDialog = false },
+            title = { Text(stringResource(R.string.dialog_delete_title)) },
+            text = { Text(stringResource(R.string.dialog_delete_message)) },
+            confirmButton = {
+                TextButton(onClick = {
+                    viewModel.onEvent(ProfileViewEvent.DeleteCard {
+                        backStack.removeLastOrNull()
+                    })
+                    showDeleteDialog = false
+                }) {
+                    Text(stringResource(R.string.dialog_delete_confirm), color = MaterialTheme.colorScheme.error)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDeleteDialog = false }) {
+                    Text(stringResource(R.string.btn_cancel))
+                }
+            }
+        )
     }
 }
 
