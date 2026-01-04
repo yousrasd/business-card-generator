@@ -44,6 +44,7 @@ class ValidateCardProfileFieldsUseCase @Inject constructor() {
         return when {
             firstName.isBlank() -> CardProfileFieldValidationResult.Error(R.string.error_first_name_required)
             firstName.length < 2 -> CardProfileFieldValidationResult.Error(R.string.error_first_name_too_short)
+            firstName.any { it.isDigit() } -> CardProfileFieldValidationResult.Error(R.string.error_first_name_invalid)
             else -> CardProfileFieldValidationResult.Success
         }
     }
@@ -52,6 +53,7 @@ class ValidateCardProfileFieldsUseCase @Inject constructor() {
         return when {
             lastName.isBlank() -> CardProfileFieldValidationResult.Error(R.string.error_last_name_required)
             lastName.length < 2 -> CardProfileFieldValidationResult.Error(R.string.error_last_name_too_short)
+            lastName.any { it.isDigit() } -> CardProfileFieldValidationResult.Error(R.string.error_last_name_invalid)
             else -> CardProfileFieldValidationResult.Success
         }
     }

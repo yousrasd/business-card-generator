@@ -34,33 +34,36 @@ class SaveBusinessCardUseCaseTest {
     
     @Test
     fun `when save succeeds, returns success with card id`() = runTest {
-        coEvery { repository.insertCard(any()) } returns 1L
+        coEvery { repository.saveCard(any()) } returns Result.success(1L)
         
         val result = useCase(testCard)
         
         assertThat(result.isSuccess).isTrue()
         assertThat(result.getOrNull()).isEqualTo(1L)
-        coVerify { repository.insertCard(testCard) }
+        coVerify { repository.saveCard(testCard) }
     }
     
     @Test
     fun `when save fails, returns failure`() = runTest {
-        coEvery { repository.insertCard(any()) } throws Exception("Database error")
+        val exception = Exception("Database error")
+        coEvery { repository.saveCard(any()) } returns Result.failure(exception)
         
         val result = useCase(testCard)
         
         assertThat(result.isFailure).isTrue()
-        coVerify { repository.insertCard(testCard) }
+        assertThat(result.exceptionOrNull()).isEqualTo(exception)
+        coVerify { repository.saveCard(testCard) }
     }
     
     @Test
     fun `when updating existing card, uses correct id`() = runTest {
         val existingCard = testCard.copy(id = 5)
-        coEvery { repository.insertCard(any()) } returns 5L
+        coEvery { repository.saveCard(any()) } returns Result.success(5L)
         
         val result = useCase(existingCard)
         
         assertThat(result.isSuccess).isTrue()
-        coVerify { repository.insertCard(existingCard) }
+        assertThat(result.getOrNull()).isEqualTo(5L)
+        coVerify { repository.saveCard(existingCard) }
     }
 }

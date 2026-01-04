@@ -82,8 +82,10 @@
     <string name="error_phone_invalid">Invalid phone format</string>
     <string name="error_first_name_required">First name is required</string>
     <string name="error_first_name_too_short">First name must be at least 2 characters</string>
+    <string name="error_first_name_invalid">First name cannot contain numbers</string>
     <string name="error_last_name_required">Last name is required</string>
     <string name="error_last_name_too_short">Last name must be at least 2 characters</string>
+    <string name="error_last_name_invalid">Last name cannot contain numbers</string>
     <string name="error_job_title_required">Job title is required</string>
     <string name="error_company_required">Company is required</string>
     <string name="error_website_invalid">Invalid website URL</string>

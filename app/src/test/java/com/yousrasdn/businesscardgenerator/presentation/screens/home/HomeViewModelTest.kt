@@ -4,12 +4,13 @@ import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
 import com.yousrasdn.businesscardgenerator.domain.model.BusinessCard
 import com.yousrasdn.businesscardgenerator.domain.usecase.GetMyBusinessCardUseCase
+import com.yousrasdn.businesscardgenerator.domain.usecase.GetScannedCardsUseCase
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
@@ -20,8 +21,9 @@ import org.junit.Test
 @OptIn(ExperimentalCoroutinesApi::class)
 class HomeViewModelTest {
     
-    private val testDispatcher = StandardTestDispatcher()
+    private val testDispatcher = UnconfinedTestDispatcher()
     private lateinit var getMyCardUseCase: GetMyBusinessCardUseCase
+    private lateinit var getScannedCardsUseCase: GetScannedCardsUseCase
     private lateinit var viewModel: HomeViewModel
     
     private val testCard = BusinessCard(
@@ -39,6 +41,9 @@ class HomeViewModelTest {
     fun setup() {
         Dispatchers.setMain(testDispatcher)
         getMyCardUseCase = mockk()
+        getScannedCardsUseCase = mockk()
+        
+        coEvery { getScannedCardsUseCase() } returns flowOf(emptyList())
     }
     
     @After
@@ -47,10 +52,10 @@ class HomeViewModelTest {
     }
     
     @Test
-    fun `initial state is loading`() = runTest {
+    fun `initial state is loading`() = runTest(testDispatcher) {
         coEvery { getMyCardUseCase() } returns flowOf(testCard)
         
-        viewModel = HomeViewModel(getMyCardUseCase)
+        viewModel = HomeViewModel(getMyCardUseCase, getScannedCardsUseCase)
         
         viewModel.uiState.test {
             val state = awaitItem()
@@ -60,11 +65,10 @@ class HomeViewModelTest {
     }
     
     @Test
-    fun `when card loaded successfully, state updates with card`() = runTest {
+    fun `when card loaded successfully, state updates with card`() = runTest(testDispatcher) {
         coEvery { getMyCardUseCase() } returns flowOf(testCard)
         
-        viewModel = HomeViewModel(getMyCardUseCase)
-        testDispatcher.scheduler.advanceUntilIdle()
+        viewModel = HomeViewModel(getMyCardUseCase, getScannedCardsUseCase)
         
         viewModel.uiState.test {
             val state = awaitItem()
@@ -75,11 +79,10 @@ class HomeViewModelTest {
     }
     
     @Test
-    fun `when show QR code event, qrCodeVisible becomes true`() = runTest {
+    fun `when show QR code event, qrCodeVisible becomes true`() = runTest(testDispatcher) {
         coEvery { getMyCardUseCase() } returns flowOf(testCard)
         
-        viewModel = HomeViewModel(getMyCardUseCase)
-        testDispatcher.scheduler.advanceUntilIdle()
+        viewModel = HomeViewModel(getMyCardUseCase, getScannedCardsUseCase)
         
         viewModel.onEvent(HomeScreenEvent.ShowQRCode(isVisible = true))
         
@@ -90,11 +93,10 @@ class HomeViewModelTest {
     }
     
     @Test
-    fun `when hide QR code event, qrCodeVisible becomes false`() = runTest {
+    fun `when hide QR code event, qrCodeVisible becomes false`() = runTest(testDispatcher) {
         coEvery { getMyCardUseCase() } returns flowOf(testCard)
         
-        viewModel = HomeViewModel(getMyCardUseCase)
-        testDispatcher.scheduler.advanceUntilIdle()
+        viewModel = HomeViewModel(getMyCardUseCase, getScannedCardsUseCase)
         
         viewModel.onEvent(HomeScreenEvent.ShowQRCode(isVisible = true))
         viewModel.onEvent(HomeScreenEvent.ShowQRCode(isVisible = false))
@@ -106,11 +108,10 @@ class HomeViewModelTest {
     }
     
     @Test
-    fun `when card loading fails, state shows error`() = runTest {
+    fun `when card loading fails, state shows error`() = runTest(testDispatcher) {
         coEvery { getMyCardUseCase() } returns flowOf(null)
         
-        viewModel = HomeViewModel(getMyCardUseCase)
-        testDispatcher.scheduler.advanceUntilIdle()
+        viewModel = HomeViewModel(getMyCardUseCase, getScannedCardsUseCase)
         
         viewModel.uiState.test {
             val state = awaitItem()

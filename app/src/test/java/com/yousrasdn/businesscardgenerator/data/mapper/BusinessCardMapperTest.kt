@@ -7,8 +7,6 @@ import org.junit.Test
 
 class BusinessCardMapperTest {
     
-    private val mapper = BusinessCardMapper()
-    
     @Test
     fun `entity to domain maps all fields correctly`() {
         val entity = BusinessCardEntity(
@@ -25,7 +23,7 @@ class BusinessCardMapperTest {
             isMyCard = true
         )
         
-        val domain = mapper.toDomain(entity)
+        val domain = entity.toDomain()
         
         assertThat(domain.id).isEqualTo(1)
         assertThat(domain.firstName).isEqualTo("John")
@@ -55,7 +53,7 @@ class BusinessCardMapperTest {
             isMyCard = true
         )
         
-        val entity = mapper.toEntity(domain)
+        val entity = domain.toEntity()
         
         assertThat(entity.id).isEqualTo(1)
         assertThat(entity.firstName).isEqualTo("John")
@@ -85,7 +83,7 @@ class BusinessCardMapperTest {
             isMyCard = true
         )
         
-        val domain = mapper.toDomain(entity)
+        val domain = entity.toDomain()
         
         assertThat(domain.photoPath).isNull()
     }
@@ -105,8 +103,8 @@ class BusinessCardMapperTest {
             isMyCard = true
         )
         
-        val entity = mapper.toEntity(original)
-        val result = mapper.toDomain(entity)
+        val entity = original.toEntity()
+        val result = entity.toDomain()
         
         assertThat(result).isEqualTo(original)
     }

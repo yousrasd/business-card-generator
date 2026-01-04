@@ -18,7 +18,9 @@ import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.flow.MutableStateFlow
+import com.yousrasdn.businesscardgenerator.debug.PrefillData
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
@@ -29,7 +31,7 @@ import org.junit.Test
 @OptIn(ExperimentalCoroutinesApi::class)
 class BusinessCardFormViewModelTest {
     
-    private val testDispatcher = StandardTestDispatcher()
+    private val testDispatcher = UnconfinedTestDispatcher()
     private lateinit var application: Application
     private lateinit var validateFields: ValidateCardProfileFieldsUseCase
     private lateinit var stepValidatorFactory: StepValidatorFactory
@@ -51,7 +53,7 @@ class BusinessCardFormViewModelTest {
         getMyCard = mockk()
         
         every { application.getString(any()) } returns "Test String"
-        coEvery { devToolsRepository.prefillData } returns flowOf(null)
+        every { devToolsRepository.prefillData } returns MutableStateFlow<PrefillData?>(null)
     }
     
     @After
@@ -60,7 +62,7 @@ class BusinessCardFormViewModelTest {
     }
     
     @Test
-    fun `initial state has first step`() = runTest {
+    fun `initial state has first step`() = runTest(testDispatcher) {
         viewModel = BusinessCardFormViewModel(
             application, validateFields, stepValidatorFactory,
             profilePictureProcessing, saveBusinessCard, devToolsRepository, getMyCard
@@ -74,7 +76,7 @@ class BusinessCardFormViewModelTest {
     }
     
     @Test
-    fun `when first name updated, state reflects change`() = runTest {
+    fun `when first name updated, state reflects change`() = runTest(testDispatcher) {
         every { validateFields.validateFirstName(any()) } returns CardProfileFieldValidationResult.Success
         
         viewModel = BusinessCardFormViewModel(
@@ -92,7 +94,7 @@ class BusinessCardFormViewModelTest {
     }
     
     @Test
-    fun `when email invalid, error is set`() = runTest {
+    fun `when email invalid, error is set`() = runTest(testDispatcher) {
         every { validateFields.validateEmail(any()) } returns 
             CardProfileFieldValidationResult.Error(R.string.error_email_invalid)
         
@@ -111,7 +113,7 @@ class BusinessCardFormViewModelTest {
     }
     
     @Test
-    fun `when card saved successfully in create mode, emits success`() = runTest {
+    fun `when card saved successfully in create mode, emits success`() = runTest(testDispatcher) {
         coEvery { saveBusinessCard(any()) } returns Result.success(1L)
         
         viewModel = BusinessCardFormViewModel(
@@ -120,15 +122,20 @@ class BusinessCardFormViewModelTest {
         )
         
         viewModel.sideEffect.test {
+            // Navigate through steps: BasicInfo -> ContactInfo -> Photo -> Review
             viewModel.onEvent(BusinessCardFormEvent.NextStep)
-            testDispatcher.scheduler.advanceUntilIdle()
+            viewModel.onEvent(BusinessCardFormEvent.NextStep)
+            viewModel.onEvent(BusinessCardFormEvent.NextStep)
             
-            expectNoEvents()
+            // Final NextStep on Review step triggers save
+            viewModel.onEvent(BusinessCardFormEvent.NextStep)
+            
+            assertThat(awaitItem()).isEqualTo(BusinessCardFormSideEffect.CardCreationSuccess)
         }
     }
     
     @Test
-    fun `when loading card for edit, state is populated`() = runTest {
+    fun `when loading card for edit, state is populated`() = runTest(testDispatcher) {
         val testCard = BusinessCard(
             id = 1,
             firstName = "John",
@@ -148,7 +155,6 @@ class BusinessCardFormViewModelTest {
         )
         
         viewModel.loadCardForEdit()
-        testDispatcher.scheduler.advanceUntilIdle()
         
         viewModel.uiState.test {
             val state = awaitItem()
